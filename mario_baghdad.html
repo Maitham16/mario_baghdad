@@ -4862,7 +4862,8 @@ async function initAudio() {
                 }
                 ctx.save();
                 ctx.translate(cx, cy + renderStyle.offsetY);
-                ctx.scale(e.direction * renderStyle.scaleX, renderStyle.scaleY);
+                const visualDirection = e.visualDirection !== undefined ? e.visualDirection : e.direction;
+                ctx.scale(visualDirection * renderStyle.scaleX, renderStyle.scaleY);
                 drawEnemySprite(e, 0, 0);
                 ctx.restore();
             }
@@ -7685,6 +7686,77 @@ async function initAudio() {
         // Behaviours that should fall under gravity (everything else either flies or
         // already manages its own Y — snake ambush, idol turret, worm burrow).
         const GRAVITY_ENEMY_BEHAVIORS = new Set(['patrol', 'chase', 'shooter', 'roll', 'sentinel', 'ember']);
+        const ENEMY_FACE_MOVE_EPSILON = 0.2;
+        const ENEMY_FACE_STABLE_FRAMES = 8;
+        const MIN_ENEMY_PATROL_SPAN = 48;
+
+        function clampPatrolEnemy(enemy) {
+            if (enemy.startX === undefined || enemy.endX === undefined) return false;
+            if (enemy.x < enemy.startX) {
+                enemy.x = enemy.startX;
+                enemy.direction = 1;
+                return true;
+            }
+            if (enemy.x > enemy.endX) {
+                enemy.x = enemy.endX;
+                enemy.direction = -1;
+                return true;
+            }
+            return false;
+        }
+
+        function trimEnemyPatrolAtWall(enemy, bounceDirection) {
+            if (!bounceDirection || enemy.startX === undefined || enemy.endX === undefined || enemy.isBoss) return;
+            if (bounceDirection < 0) {
+                enemy.endX = Math.min(enemy.endX, enemy.x);
+                if (enemy.endX - enemy.startX < MIN_ENEMY_PATROL_SPAN) {
+                    enemy.startX = enemy.endX - MIN_ENEMY_PATROL_SPAN;
+                }
+            } else {
+                enemy.startX = Math.max(enemy.startX, enemy.x);
+                if (enemy.endX - enemy.startX < MIN_ENEMY_PATROL_SPAN) {
+                    enemy.endX = enemy.startX + MIN_ENEMY_PATROL_SPAN;
+                }
+            }
+        }
+
+        function updateEnemyVisualDirection(enemy, prevX) {
+            const movedX = enemy.x - prevX;
+            const movementDir = Math.abs(movedX) >= ENEMY_FACE_MOVE_EPSILON ? (movedX > 0 ? 1 : -1) : 0;
+            const desiredDir = movementDir || (enemy.direction >= 0 ? 1 : -1);
+
+            if (enemy.visualDirection === undefined) {
+                enemy.visualDirection = desiredDir;
+                enemy.visualDirectionCandidate = desiredDir;
+                enemy.visualDirectionTimer = 0;
+                return;
+            }
+
+            if (movementDir !== 0) {
+                enemy.visualDirection = movementDir;
+                enemy.visualDirectionCandidate = movementDir;
+                enemy.visualDirectionTimer = 0;
+                return;
+            }
+
+            if (desiredDir === enemy.visualDirection) {
+                enemy.visualDirectionCandidate = desiredDir;
+                enemy.visualDirectionTimer = 0;
+                return;
+            }
+
+            if (enemy.visualDirectionCandidate !== desiredDir) {
+                enemy.visualDirectionCandidate = desiredDir;
+                enemy.visualDirectionTimer = 1;
+                return;
+            }
+
+            enemy.visualDirectionTimer = (enemy.visualDirectionTimer || 0) + 1;
+            if (enemy.visualDirectionTimer >= ENEMY_FACE_STABLE_FRAMES) {
+                enemy.visualDirection = desiredDir;
+                enemy.visualDirectionTimer = 0;
+            }
+        }
 
         function getSolidPlatformRect(platform) {
             if (!platform || platform._remove || platform.crumbleFalling) return null;
@@ -7727,6 +7799,7 @@ async function initAudio() {
             // The platform that triggered the most recent wall hit. The recover-on-wall
             // logic below skips arena gates / timed gates so the boss can roam freely.
             let hitWallPlatform = null;
+            let wallBounceDirection = 0;
 
             for (let i = 0; i < platforms.length; i++) {
                 const plat = platforms[i];
@@ -7746,10 +7819,12 @@ async function initAudio() {
                     enemy.x = solidRect.x - enemy.width - 0.01;
                     hitWall = true;
                     hitWallPlatform = plat;
+                    wallBounceDirection = -1;
                 } else if (cameFromRight) {
                     enemy.x = solidRect.x + solidRect.width + 0.01;
                     hitWall = true;
                     hitWallPlatform = plat;
+                    wallBounceDirection = 1;
                 } else if (allowVerticalResolution && cameFromAbove) {
                     enemy.y = solidRect.y - enemy.height;
                     if (enemy.velY > 0) enemy.velY = 0;
@@ -7761,9 +7836,11 @@ async function initAudio() {
                     const overlapY = Math.min(enemyRect.y + enemyRect.height - solidRect.y, solidRect.y + solidRect.height - enemyRect.y);
 
                     if (overlapX <= overlapY || !allowVerticalResolution) {
-                        enemy.x += prevRect.x <= enemy.x ? -overlapX - 0.01 : overlapX + 0.01;
+                        const movedRight = prevRect.x <= enemy.x;
+                        enemy.x += movedRight ? -overlapX - 0.01 : overlapX + 0.01;
                         hitWall = true;
                         hitWallPlatform = plat;
+                        wallBounceDirection = movedRight ? -1 : 1;
                     } else {
                         enemy.y += prevRect.y <= enemy.y ? -overlapY - 0.01 : overlapY + 0.01;
                     }
@@ -7779,7 +7856,8 @@ async function initAudio() {
                 const isSceneBound = hitWallPlatform &&
                     (hitWallPlatform.type === 'arena_gate' || hitWallPlatform.type === 'timed_gate');
                 if (!isSceneBound) {
-                    enemy.direction *= -1;
+                    enemy.direction = wallBounceDirection || -enemy.direction;
+                    trimEnemyPatrolAtWall(enemy, wallBounceDirection);
                     if (enemy.aiState === 'dash' || enemy.aiState === 'charge') {
                         enemy.aiState = 'recover';
                         enemy.recoverTimer = Math.max(enemy.recoverTimer || 0, enemy.isBoss ? 24 : 18);
@@ -8653,13 +8731,13 @@ async function initAudio() {
                             e.direction = dx > 0 ? 1 : -1;
                         } else {
                             e.x += e.velX * e.direction;
-                            if (e.x < e.startX || e.x > e.endX) e.direction *= -1;
+                            clampPatrolEnemy(e);
                         }
                         break;
 
                     case 'fly': // Carpet: sine wave pattern, drop when player passes below
                         e.x += e.velX * e.direction;
-                        if (e.x < e.startX || e.x > e.endX) e.direction *= -1;
+                        clampPatrolEnemy(e);
                         e.y = 200 + Math.sin(Date.now()/300 + e.sineOffset) * 50;
                         // Drop when player is below
                         if (player.y > e.y + 50 && Math.abs(dx) < 50) {
@@ -8680,7 +8758,7 @@ async function initAudio() {
                             e.y = 502 - ((180-ambushCycle)/60) * 40; // Retreat underground
                         }
                         e.x += e.velX * e.direction * 0.5;
-                        if (e.x < e.startX || e.x > e.endX) e.direction *= -1;
+                        clampPatrolEnemy(e);
                         break;
 
                     case 'shooter': // Archer: stationary, shoots arrows
@@ -8704,12 +8782,12 @@ async function initAudio() {
                         if (dx > 0) e.direction = 1;
                         else e.direction = -1;
                         // Bounce at edges
-                        if (e.x < e.startX || e.x > e.endX) e.direction *= -1;
+                        clampPatrolEnemy(e);
                         break;
 
                     case 'burrow': // Worm: moves under platforms, creates temporary holes
                         e.x += e.velX * e.direction * 0.7;
-                        if (e.x < e.startX || e.x > e.endX) e.direction *= -1;
+                        clampPatrolEnemy(e);
                         // Create temporary holes periodically
                         if (e.attackTimer % 90 === 0) {
                             temporaryHoles.push({
@@ -8725,7 +8803,7 @@ async function initAudio() {
                     case 'sentinel':
                         if (e.aiState === 'idle') {
                             e.x += e.velX * e.direction * 0.7;
-                            if (e.x < e.startX || e.x > e.endX) e.direction *= -1;
+                            clampPatrolEnemy(e);
                             if (dist < 190 && Math.abs(dy) < 90 && e.attackCooldown <= 0) {
                                 e.aiState = 'telegraph';
                                 e.stateTimer = 38;
@@ -8860,7 +8938,7 @@ async function initAudio() {
                     case 'ember':
                         if (e.aiState === 'idle') {
                             e.x += e.velX * e.direction * 0.6;
-                            if (e.x < e.startX || e.x > e.endX) e.direction *= -1;
+                            clampPatrolEnemy(e);
                             if (dist < 320 && e.attackCooldown <= 0) {
                                 e.aiState = 'telegraph';
                                 e.stateTimer = 36;
@@ -9093,7 +9171,7 @@ async function initAudio() {
                     case 'patrol': // Guard: simple back and forth
                     default:
                         e.x += e.velX * e.direction;
-                        if (e.x < e.startX || e.x > e.endX) e.direction *= -1;
+                        clampPatrolEnemy(e);
                         break;
                 }
 
@@ -9111,6 +9189,7 @@ async function initAudio() {
                 // can't walk through solid obstacles. Bosses also do this — but the
                 // resolver internally skips arena gates for bosses.
                 resolveEnemySolidCollision(e, enemyPrevX, enemyPrevY);
+                updateEnemyVisualDirection(e, enemyPrevX);
 
                 // Boss defeat handling — multi-stage shatter sequence with shockwave
                 // rings, gold confetti, and a delayed fireworks finale so the kill feels
