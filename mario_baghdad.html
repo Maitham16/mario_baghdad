@@ -145,6 +145,905 @@
             margin: 20px 0;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
         }
+
+        /* ═══════════════════════════════════════════════════════════════
+           PROFESSIONAL GAME DASHBOARD
+           ═══════════════════════════════════════════════════════════════ */
+        :root {
+            --d-gold: #FFD700;
+            --d-gold-dim: #C9A227;
+            --d-gold-deep: #8B6914;
+            --d-bronze: #8B4513;
+            --d-panel: rgba(15, 12, 28, 0.96);
+            --d-panel-light: rgba(255, 215, 0, 0.06);
+            --d-border: rgba(255, 215, 0, 0.28);
+            --d-border-strong: rgba(255, 215, 0, 0.55);
+            --d-text: #F5E6C4;
+            --d-text-dim: rgba(245, 230, 196, 0.55);
+            --d-danger: #E94B2B;
+        }
+
+        .dash-screen {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            flex-direction: column;
+            z-index: 150;
+            background:
+                radial-gradient(ellipse at top, rgba(255,165,0,0.10) 0%, transparent 55%),
+                radial-gradient(ellipse at bottom, rgba(91,30,140,0.10) 0%, transparent 55%),
+                linear-gradient(180deg, rgba(8,5,18,0.97) 0%, rgba(20,12,40,0.97) 100%);
+            color: var(--d-text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+        .dash-screen.active { display: flex; }
+
+        .dash-screen::before {
+            content: '';
+            position: absolute; inset: 0;
+            background-image:
+                repeating-linear-gradient(0deg, rgba(255,215,0,0.025) 0 1px, transparent 1px 28px),
+                repeating-linear-gradient(90deg, rgba(255,215,0,0.025) 0 1px, transparent 1px 28px);
+            pointer-events: none;
+            opacity: 0.4;
+        }
+        .dash-screen::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(255,215,0,0.06), transparent 60%);
+            pointer-events: none;
+        }
+
+        .dash-header {
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px 26px;
+            border-bottom: 1px solid var(--d-border);
+            background: linear-gradient(180deg, rgba(255,215,0,0.08), transparent);
+            position: relative;
+            z-index: 2;
+        }
+        .dash-header-emblem {
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            background: radial-gradient(circle, #FFD700, #8B4513);
+            border: 2px solid #FFD700;
+            border-radius: 50%;
+            font-size: 20px;
+            box-shadow: 0 0 18px rgba(255,215,0,0.4);
+        }
+        .dash-title {
+            font-size: 20px; color: var(--d-gold);
+            text-transform: uppercase; letter-spacing: 5px;
+            font-weight: 700;
+            text-shadow: 0 0 14px rgba(255,215,0,0.4);
+        }
+        .dash-subtitle {
+            font-size: 11px; color: var(--d-text-dim);
+            letter-spacing: 3px; text-transform: uppercase;
+            margin-top: 2px;
+        }
+        .dash-back {
+            font-size: 12px; padding: 8px 14px;
+            cursor: pointer;
+            background: rgba(255,215,0,0.08);
+            border: 1px solid var(--d-border);
+            color: var(--d-gold);
+            border-radius: 18px;
+            transition: all 0.2s;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-left: auto;
+            font-family: inherit;
+        }
+        .dash-back:hover {
+            background: rgba(255,215,0,0.22);
+            border-color: var(--d-gold);
+            transform: translateX(-2px);
+        }
+
+        .dash-body {
+            flex: 1;
+            padding: 22px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 2;
+        }
+        .dash-body::-webkit-scrollbar { width: 8px; }
+        .dash-body::-webkit-scrollbar-track { background: transparent; }
+        .dash-body::-webkit-scrollbar-thumb {
+            background: rgba(255,215,0,0.3); border-radius: 4px;
+        }
+
+        /* Main menu — sized to fit 600px viewport without scrolling */
+        #mainMenu .dash-body {
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding: 14px 24px 36px;
+        }
+        .menu-hero {
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        .menu-emblem {
+            width: 160px; height: 160px;
+            margin: 0 auto 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: radial-gradient(circle, #FFE066 5%, #FFA000 30%, #8B4513 70%, transparent 80%);
+            border-radius: 50%;
+            font-size: 90px;
+            line-height: 1;
+            box-shadow:
+                0 0 70px rgba(255,215,0,0.65),
+                0 0 140px rgba(255,165,0,0.35),
+                inset 0 0 30px rgba(0,0,0,0.55);
+            animation: emblemBreathe 3s ease-in-out infinite;
+        }
+        @keyframes emblemBreathe {
+            0%,100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.04); filter: brightness(1.15); }
+        }
+        .menu-title-big {
+            font-size: 42px; font-weight: 900;
+            background: linear-gradient(180deg, #FFE869 0%, #FFD700 40%, #FF8A00 80%, #B05000 100%);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 6px;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 4px 16px rgba(0,0,0,0.65));
+            text-transform: uppercase;
+            line-height: 1;
+        }
+        .menu-tag {
+            font-size: 11px; color: var(--d-text-dim);
+            letter-spacing: 7px; text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+        /* 2-column grid keeps every option visible inside the 600px canvas */
+        .menu-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 10px;
+            width: 600px;
+            max-width: 100%;
+        }
+        .menu-list .menu-item.primary {
+            grid-column: 1 / -1;
+        }
+        .menu-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 16px;
+            background: linear-gradient(90deg, rgba(255,215,0,0.06), rgba(255,215,0,0.01));
+            border: 1px solid var(--d-border);
+            border-left: 4px solid var(--d-gold-dim);
+            border-radius: 6px;
+            color: var(--d-text);
+            font-size: 13px; font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: inherit;
+            text-align: left;
+            width: 100%;
+        }
+        .menu-item:hover, .menu-item:focus {
+            background: linear-gradient(90deg, rgba(255,215,0,0.2), rgba(255,215,0,0.04));
+            border-left-color: #fff;
+            transform: translateX(6px);
+            outline: none;
+            color: #fff;
+        }
+        .menu-item.primary {
+            background: linear-gradient(180deg, #FFE066 0%, #FFA500 60%, #FF8A00 100%);
+            color: #2d1b00;
+            border-color: #fff;
+            border-left-color: #fff;
+            box-shadow: 0 4px 20px rgba(255,165,0,0.4);
+        }
+        .menu-item.primary:hover {
+            background: linear-gradient(180deg, #FFF099 0%, #FFB733 60%, #FF9933 100%);
+            box-shadow: 0 6px 28px rgba(255,165,0,0.6);
+        }
+        .menu-item .menu-icon {
+            font-size: 18px;
+            width: 24px; text-align: center;
+        }
+        .menu-item .menu-kbd {
+            margin-left: auto;
+            font-size: 10px;
+            padding: 2px 8px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 4px;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+        .menu-item.primary .menu-kbd { background: rgba(0,0,0,0.2); border-color: rgba(0,0,0,0.4); color:#5a3a00; }
+        .menu-footer {
+            position: absolute; bottom: 14px;
+            left: 0; right: 0;
+            text-align: center;
+            font-size: 10px; color: var(--d-text-dim);
+            letter-spacing: 4px;
+            z-index: 3;
+        }
+        .menu-footer .accent { color: var(--d-gold-dim); }
+
+        /* Character select */
+        #characterSelect .dash-body {
+            align-items: center;
+            justify-content: center;
+        }
+        .char-stage {
+            display: flex; gap: 28px;
+            margin: 10px 0;
+        }
+        .char-card {
+            width: 210px;
+            padding: 18px 16px;
+            background: linear-gradient(180deg, rgba(255,215,0,0.06), rgba(0,0,0,0.4));
+            border: 2px solid var(--d-border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s;
+            position: relative;
+            text-align: center;
+        }
+        .char-card:hover {
+            border-color: var(--d-gold-dim);
+            transform: translateY(-4px);
+        }
+        .char-card.selected {
+            border-color: var(--d-gold);
+            box-shadow: 0 0 32px rgba(255,215,0,0.4),
+                        inset 0 0 20px rgba(255,215,0,0.05);
+            background: linear-gradient(180deg, rgba(255,215,0,0.14), rgba(0,0,0,0.5));
+        }
+        .char-card.selected::before {
+            content: '✓ SELECTED';
+            position: absolute; top: -12px; left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(180deg, #FFE066, #FFA500);
+            color: #2d1b00;
+            padding: 4px 14px; border-radius: 12px;
+            font-size: 10px; font-weight: 800;
+            letter-spacing: 2px;
+            box-shadow: 0 0 14px rgba(255,165,0,0.6);
+        }
+        .char-canvas {
+            width: 140px; height: 180px;
+            margin: 6px auto 8px;
+            background: radial-gradient(ellipse at center, rgba(255,215,0,0.15) 0%, transparent 70%);
+            border-radius: 8px;
+        }
+        .char-name {
+            font-size: 22px; color: var(--d-gold);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-top: 4px; font-weight: 800;
+        }
+        .char-desc {
+            font-size: 11px; color: var(--d-text-dim);
+            margin-top: 4px; letter-spacing: 1px;
+        }
+        .char-stats {
+            margin-top: 10px;
+            display: flex; justify-content: center; gap: 12px;
+        }
+        .char-stat {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 10px; color: var(--d-text-dim);
+            letter-spacing: 1px;
+        }
+        .char-stat .swatch {
+            width: 12px; height: 12px; border-radius: 3px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Settings rows */
+        .setting-row {
+            display: flex; align-items: center;
+            justify-content: space-between; gap: 16px;
+            padding: 13px 18px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            transition: border-color 0.2s;
+        }
+        .setting-row:hover { border-color: var(--d-border); }
+        .setting-label {
+            font-size: 14px; color: var(--d-text);
+            letter-spacing: 1px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .setting-label .icon { font-size: 18px; opacity: 0.8; }
+        .setting-label small {
+            display: block; font-size: 11px;
+            color: var(--d-text-dim);
+            margin-top: 3px; letter-spacing: 0.5px;
+            font-weight: normal;
+        }
+        .setting-control {
+            display: flex; align-items: center;
+            gap: 14px; min-width: 280px;
+            justify-content: flex-end;
+        }
+        .toggle {
+            width: 50px; height: 26px;
+            background: #2a2438;
+            border-radius: 13px;
+            position: relative; cursor: pointer;
+            transition: background 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
+        }
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px; left: 2px;
+            width: 20px; height: 20px;
+            background: white; border-radius: 50%;
+            transition: left 0.2s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+        }
+        .toggle.on {
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-color: rgba(255,215,0,0.5);
+        }
+        .toggle.on::after { left: 26px; }
+        .slider {
+            -webkit-appearance: none; appearance: none;
+            width: 160px; height: 6px;
+            background: linear-gradient(90deg,
+                var(--d-gold) 0%, var(--d-gold) var(--p, 0%),
+                #2a2438 var(--p, 0%), #2a2438 100%);
+            border-radius: 3px; outline: none;
+            cursor: pointer;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 16px; height: 16px;
+            background: #FFE066;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 8px rgba(255,215,0,0.6);
+        }
+        .slider::-moz-range-thumb {
+            width: 16px; height: 16px;
+            background: #FFE066;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 8px rgba(255,215,0,0.6);
+        }
+        .slider:disabled { opacity: 0.3; cursor: not-allowed; }
+        .value-display {
+            min-width: 38px; text-align: right;
+            color: var(--d-gold);
+            font-weight: 700; font-size: 13px;
+            font-family: 'Courier New', monospace;
+        }
+        .audio-meter {
+            margin-top: 8px;
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .audio-meter-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4CFF4C 0%, #FFD700 60%, #FF4444 100%);
+            transition: width 0.05s linear;
+        }
+
+        /* Controls */
+        .control-group {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 14px 18px;
+        }
+        .control-group-title {
+            font-size: 11px;
+            color: var(--d-gold);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,215,0,0.15);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .control-row {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr;
+            align-items: center;
+            gap: 12px;
+            padding: 7px 0;
+        }
+        .control-row:not(:last-child) {
+            border-bottom: 1px dashed rgba(255,255,255,0.05);
+        }
+        .control-row.header {
+            font-size: 10px;
+            color: var(--d-text-dim);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,215,0,0.2);
+        }
+        .control-action {
+            color: var(--d-text);
+            font-size: 13px;
+            letter-spacing: 1px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .control-action .icon {
+            font-size: 16px;
+            width: 22px; text-align: center;
+            opacity: 0.85;
+        }
+        .bind-button {
+            padding: 7px 12px;
+            background: rgba(255,215,0,0.08);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 6px;
+            color: var(--d-gold);
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.15s;
+            text-align: center;
+            min-width: 100px;
+        }
+        .bind-button:hover {
+            background: rgba(255,215,0,0.22);
+            border-color: var(--d-gold);
+        }
+        .bind-button.listening {
+            background: #FFD700;
+            color: #000;
+            border-color: #fff;
+            animation: bindPulse 0.6s infinite alternate;
+        }
+        .bind-button.empty {
+            opacity: 0.4;
+            color: var(--d-text-dim);
+            border-style: dashed;
+        }
+        @keyframes bindPulse {
+            from { box-shadow: 0 0 0 0 rgba(255,215,0,0.7); }
+            to   { box-shadow: 0 0 0 10px rgba(255,215,0,0); }
+        }
+
+        .gamepad-status {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+        }
+        .gp-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: #555;
+            transition: all 0.2s;
+        }
+        .gp-dot.connected {
+            background: #4CFF4C;
+            box-shadow: 0 0 12px #4CFF4C;
+        }
+        .gp-name {
+            font-size: 12px;
+            color: var(--d-text);
+            letter-spacing: 1px;
+            flex: 1;
+        }
+        .gp-test {
+            font-size: 10px;
+            color: var(--d-text-dim);
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
+        }
+        .gp-test .pressed {
+            color: var(--d-gold);
+            background: rgba(255,215,0,0.15);
+            padding: 2px 6px; border-radius: 4px;
+        }
+
+        /* About */
+        #about .dash-body {
+            align-items: center;
+            justify-content: center;
+        }
+        .about-card {
+            max-width: 640px;
+            width: 100%;
+            padding: 32px 36px;
+            background:
+                linear-gradient(135deg, rgba(255,215,0,0.08), rgba(91,30,140,0.05) 50%, rgba(0,0,0,0.4)),
+                linear-gradient(180deg, rgba(8,5,18,0.6), rgba(8,5,18,0.8));
+            border: 1px solid var(--d-border-strong);
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(255,215,0,0.1);
+            position: relative;
+        }
+        .about-card::before {
+            content: '★ ★ ★';
+            position: absolute; top: -10px; left: 50%;
+            transform: translateX(-50%);
+            background: #0d0a1a; padding: 0 14px;
+            color: var(--d-gold);
+            font-size: 13px; letter-spacing: 8px;
+        }
+        .about-emblem {
+            font-size: 38px;
+            margin-bottom: 8px;
+        }
+        .about-card h2 {
+            font-size: 26px;
+            color: var(--d-gold);
+            letter-spacing: 6px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            font-weight: 800;
+            text-shadow: 0 0 18px rgba(255,215,0,0.4);
+        }
+        .about-card .tagline {
+            font-size: 11px;
+            color: var(--d-text-dim);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+        .about-card p {
+            color: var(--d-text);
+            font-size: 13px;
+            line-height: 1.7;
+            margin: 10px 0;
+            opacity: 0.85;
+        }
+        .about-divider {
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--d-gold-dim), transparent);
+            margin: 18px auto;
+        }
+        .about-designer-label {
+            font-size: 10px;
+            color: var(--d-text-dim);
+            letter-spacing: 6px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        .about-designer {
+            font-size: 22px;
+            color: var(--d-gold);
+            letter-spacing: 8px;
+            font-weight: 800;
+            text-shadow: 0 0 16px rgba(255,215,0,0.45);
+            margin-bottom: 4px;
+        }
+        .about-dedication {
+            margin: 22px auto 10px;
+            padding: 20px 24px;
+            background: rgba(255,215,0,0.04);
+            border-left: 3px solid var(--d-gold);
+            border-right: 3px solid var(--d-gold);
+            text-align: center;
+            max-width: 480px;
+        }
+        .about-dedication .for {
+            font-size: 11px; color: var(--d-text-dim);
+            letter-spacing: 6px; text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .about-dedication .parents {
+            font-size: 22px;
+            color: var(--d-gold);
+            letter-spacing: 5px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .about-dedication p {
+            font-size: 12px;
+            font-style: italic;
+            line-height: 1.7;
+            color: var(--d-text);
+            opacity: 0.85;
+            margin: 0;
+        }
+        .about-foot {
+            margin-top: 18px;
+            font-size: 10px;
+            color: var(--d-text-dim);
+            letter-spacing: 5px;
+        }
+
+        /* Pause */
+        #pauseMenu {
+            background: rgba(0,0,0,0.72);
+        }
+        #pauseMenu .dash-body { align-items: center; justify-content: center; }
+        .pause-title {
+            font-size: 36px;
+            color: var(--d-gold);
+            letter-spacing: 8px;
+            margin-bottom: 22px;
+            text-shadow: 0 0 18px rgba(255,215,0,0.5);
+            text-transform: uppercase;
+        }
+
+        /* Game-over & Win — restyled to match dashboard */
+        #gameOverScreen, #winScreen, #levelScreen {
+            background:
+                radial-gradient(ellipse at center, rgba(40,15,15,0.92) 0%, rgba(8,5,18,0.97) 100%);
+            color: var(--d-text);
+        }
+        #winScreen {
+            background:
+                radial-gradient(ellipse at center, rgba(60,40,5,0.92) 0%, rgba(8,5,18,0.97) 100%);
+        }
+        .endgame-actions {
+            display: flex; gap: 12px;
+            margin-top: 18px;
+        }
+        .end-btn {
+            padding: 12px 26px;
+            font-size: 13px;
+            background: linear-gradient(180deg, rgba(255,215,0,0.15), rgba(255,165,0,0.08));
+            border: 1px solid var(--d-border-strong);
+            color: var(--d-gold);
+            border-radius: 22px;
+            cursor: pointer;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .end-btn:hover {
+            background: linear-gradient(180deg, rgba(255,215,0,0.3), rgba(255,165,0,0.16));
+            border-color: var(--d-gold);
+            transform: translateY(-2px);
+        }
+        .end-btn.primary {
+            background: linear-gradient(180deg, #FFE066, #FFA500);
+            color: #2d1b00;
+            border-color: #fff;
+        }
+        .end-btn.primary:hover {
+            background: linear-gradient(180deg, #FFF099, #FFB733);
+        }
+
+        /* Credits */
+        #creditsRoll {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            background:
+                radial-gradient(ellipse at center, rgba(20,10,40,0.95) 0%, rgba(0,0,0,1) 80%);
+            overflow: hidden;
+            z-index: 200;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #creditsRoll.active { display: block; }
+        .credits-stars {
+            position: absolute; inset: 0;
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, #FFF, transparent),
+                radial-gradient(1px 1px at 60% 60%, #FFD700, transparent),
+                radial-gradient(2px 2px at 80% 20%, #FFF, transparent),
+                radial-gradient(1px 1px at 30% 80%, #FFF, transparent),
+                radial-gradient(2px 2px at 90% 70%, #FFD700, transparent),
+                radial-gradient(1px 1px at 10% 50%, #FFF, transparent),
+                radial-gradient(2px 2px at 50% 90%, #FFF, transparent),
+                radial-gradient(1px 1px at 75% 45%, #FFD700, transparent),
+                radial-gradient(2px 2px at 40% 15%, #FFF, transparent);
+            opacity: 0.55;
+            animation: starsTwinkle 6s ease-in-out infinite alternate;
+        }
+        @keyframes starsTwinkle {
+            from { opacity: 0.35; }
+            to { opacity: 0.65; }
+        }
+        .credits-scroll-wrap {
+            position: absolute;
+            left: 0; right: 0;
+            top: 0;
+            height: 100%;
+            overflow: hidden;
+            mask-image: linear-gradient(180deg, transparent 0%, black 15%, black 85%, transparent 100%);
+            -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 15%, black 85%, transparent 100%);
+        }
+        .credits-content {
+            position: absolute;
+            left: 0; right: 0;
+            top: 100%;
+            text-align: center;
+            padding: 0 60px 200px;
+            animation: creditsScroll 78s linear forwards;
+        }
+        @keyframes creditsScroll {
+            from { transform: translateY(0); }
+            to   { transform: translateY(-180%); }
+        }
+        .credit-emblem {
+            font-size: 48px;
+            margin: 60px 0 6px;
+            filter: drop-shadow(0 0 20px rgba(255,215,0,0.6));
+        }
+        .credit-title {
+            font-size: 64px; font-weight: 900;
+            background: linear-gradient(180deg, #FFE869 0%, #FFD700 40%, #FF8A00 80%, #B05000 100%);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 10px;
+            margin: 0 0 8px;
+            text-transform: uppercase;
+            filter: drop-shadow(0 4px 14px rgba(0,0,0,0.5));
+        }
+        .credit-sub {
+            font-size: 14px;
+            color: var(--d-text-dim);
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-bottom: 60px;
+        }
+        .credit-section { margin: 52px auto; max-width: 600px; }
+        .credit-section h3 {
+            font-size: 12px;
+            color: rgba(255,215,0,0.75);
+            letter-spacing: 7px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .credit-section .name {
+            color: var(--d-gold);
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: 6px;
+            text-shadow: 0 0 16px rgba(255,215,0,0.4);
+            text-transform: uppercase;
+        }
+        .credit-section p {
+            font-size: 16px;
+            color: white;
+            margin: 6px 0;
+            letter-spacing: 2px;
+        }
+        .credit-section .role {
+            font-size: 11px;
+            color: var(--d-text-dim);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+        .credit-dedication {
+            margin: 100px auto 60px;
+            max-width: 600px;
+            padding: 50px 40px;
+            background:
+                radial-gradient(ellipse at center, rgba(255,215,0,0.10), transparent 70%);
+            border-top: 1px solid rgba(255,215,0,0.35);
+            border-bottom: 1px solid rgba(255,215,0,0.35);
+            position: relative;
+        }
+        .credit-dedication::before, .credit-dedication::after {
+            content: '✦';
+            position: absolute;
+            color: var(--d-gold);
+            font-size: 18px;
+            top: -10px;
+            background: #000;
+            padding: 0 10px;
+        }
+        .credit-dedication::before { left: 50%; transform: translateX(-50%); }
+        .credit-dedication::after { display: none; }
+        .credit-dedication .small {
+            font-size: 12px;
+            color: var(--d-text-dim);
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .credit-dedication .big {
+            font-size: 36px;
+            color: var(--d-gold);
+            margin: 14px 0 20px;
+            letter-spacing: 6px;
+            font-weight: 800;
+            text-shadow: 0 0 22px rgba(255,215,0,0.55);
+            text-transform: uppercase;
+        }
+        .credit-dedication .body-text {
+            font-size: 16px;
+            color: white;
+            line-height: 1.9;
+            font-style: italic;
+            opacity: 0.9;
+            letter-spacing: 1px;
+        }
+        .credit-dedication .signature {
+            margin-top: 28px;
+            font-size: 12px;
+            color: var(--d-text-dim);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+        }
+        .credit-dedication .signature .designer-name {
+            display: block;
+            font-size: 22px;
+            color: var(--d-gold);
+            letter-spacing: 8px;
+            margin-top: 10px;
+            font-weight: 700;
+            text-shadow: 0 0 14px rgba(255,215,0,0.4);
+        }
+        .credit-thanks {
+            margin: 80px auto 60px;
+            font-size: 18px;
+            color: white;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+        .credit-final-emblem {
+            font-size: 36px;
+            margin: 30px 0;
+            filter: drop-shadow(0 0 20px rgba(255,215,0,0.6));
+        }
+        .credits-skip {
+            position: absolute; bottom: 20px; right: 20px;
+            padding: 9px 18px;
+            background: rgba(0,0,0,0.65);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 22px;
+            cursor: pointer;
+            font-size: 11px;
+            letter-spacing: 3px;
+            font-family: inherit;
+            z-index: 4;
+            text-transform: uppercase;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+        .credits-skip:hover {
+            background: rgba(255,215,0,0.2);
+            border-color: var(--d-gold);
+        }
+
+        /* In-game pause hint */
+        #pauseHint {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 5px 11px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            font-size: 11px;
+            letter-spacing: 2px;
+            border-radius: 14px;
+            z-index: 12;
+            opacity: 0.6;
+            pointer-events: none;
+            text-transform: uppercase;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -159,30 +1058,394 @@
             <div class="ui-item" id="powerDisplay">⚡ <span id="powerName">-</span> <span id="powerTime"></span></div>
         </div>
 
-        <div id="startScreen">
-            <div class="title">🕌 MARIO IN BAGHDAD 🕌</div>
-            <div class="subtitle">25 levels across the ancient city!</div>
-            <button class="btn" onclick="startGame()">START ADVENTURE</button>
-            <div class="instructions">
-                <p><span>← →</span> Move <span>SHIFT</span> Run <span>SPACE</span> Jump (hold for higher) <span>W or ↑</span> also jumps</p>
-                <p style="margin-top:6px"><span>↓</span> Duck / Pipe Warp <span>F</span> Fireball <span>SPACE</span> in air = Double Jump</p>
-                <p style="margin-top:10px">Duck trap shots, ride lifts, hit switches, push blocks, find hidden routes. Slide off walls to wall-jump!</p>
-                <p style="margin-top:8px;color:#FFD700">50 coins = +1 life &nbsp; 10 gems = +1 life &nbsp; Stomp enemies in a row for combo points!</p>
+        <!-- Legacy start screen kept hidden; new dashboard handles entry -->
+        <div id="startScreen" style="display:none">
+            <button class="btn" onclick="startGame()">START</button>
+        </div>
+
+        <!-- ═══════ MAIN MENU / DASHBOARD ═══════ -->
+        <div id="mainMenu" class="dash-screen active">
+            <div class="dash-body">
+                <div class="menu-hero">
+                    <div class="menu-emblem">🕌</div>
+                    <div class="menu-title-big">Mario in Baghdad</div>
+                    <div class="menu-tag">A Tribute Adventure · 25 Levels</div>
+                </div>
+                <div class="menu-list">
+                    <button class="menu-item primary" onclick="dash.startGame()">
+                        <span class="menu-icon">▶</span>
+                        <span>Play Adventure</span>
+                        <span class="menu-kbd">ENTER</span>
+                    </button>
+                    <button class="menu-item" onclick="dash.show('characterSelect')">
+                        <span class="menu-icon">👤</span>
+                        <span>Character</span>
+                        <span class="menu-kbd" id="menuCharLabel">MARIO</span>
+                    </button>
+                    <button class="menu-item" onclick="dash.show('settings')">
+                        <span class="menu-icon">⚙</span>
+                        <span>Audio Settings</span>
+                        <span class="menu-kbd" id="menuAudioLabel">SFX</span>
+                    </button>
+                    <button class="menu-item" onclick="dash.show('controls')">
+                        <span class="menu-icon">🎮</span>
+                        <span>Controls</span>
+                        <span class="menu-kbd" id="menuPadLabel">KEYBOARD</span>
+                    </button>
+                    <button class="menu-item" onclick="dash.show('howToPlay')">
+                        <span class="menu-icon">📜</span>
+                        <span>How to Play</span>
+                        <span class="menu-kbd">GUIDE</span>
+                    </button>
+                    <button class="menu-item" onclick="dash.show('about')">
+                        <span class="menu-icon">ⓘ</span>
+                        <span>About</span>
+                        <span class="menu-kbd">INFO</span>
+                    </button>
+                    <button class="menu-item" onclick="dash.showCredits(true)">
+                        <span class="menu-icon">★</span>
+                        <span>Credits</span>
+                        <span class="menu-kbd">ROLL</span>
+                    </button>
+                </div>
+            </div>
+            <div class="menu-footer">
+                <span class="accent">©</span> 2026 · DESIGNED BY <span class="accent">MAITHAM ALRUBAYE</span> · DEDICATED TO HIS FATHER & MOTHER
             </div>
         </div>
 
-        <div id="gameOverScreen">
-            <div class="title">GAME OVER</div>
-            <div class="score-display">Score: <span id="finalScore">0</span></div>
-            <button class="btn" onclick="startGame()">TRY AGAIN</button>
+        <!-- ═══════ CHARACTER SELECT ═══════ -->
+        <div id="characterSelect" class="dash-screen">
+            <div class="dash-header">
+                <div class="dash-header-emblem">👤</div>
+                <div>
+                    <div class="dash-title">Choose Your Hero</div>
+                    <div class="dash-subtitle">Pick the warrior who walks with you</div>
+                </div>
+                <button class="dash-back" onclick="dash.back()">◀ BACK</button>
+            </div>
+            <div class="dash-body">
+                <div class="char-stage">
+                    <div class="char-card" data-char="mario" onclick="dash.selectChar('mario')">
+                        <canvas class="char-canvas" id="charPreviewMario" width="140" height="180"></canvas>
+                        <div class="char-name">Mario</div>
+                        <div class="char-desc">The Red Crimson — child of the river markets</div>
+                        <div class="char-stats">
+                            <div class="char-stat"><span class="swatch" style="background:#B22222"></span>FEZ</div>
+                            <div class="char-stat"><span class="swatch" style="background:#6A0DAD"></span>VEST</div>
+                            <div class="char-stat"><span class="swatch" style="background:#DC143C"></span>SASH</div>
+                        </div>
+                    </div>
+                    <div class="char-card" data-char="luigi" onclick="dash.selectChar('luigi')">
+                        <canvas class="char-canvas" id="charPreviewLuigi" width="140" height="180"></canvas>
+                        <div class="char-name">Luigi</div>
+                        <div class="char-desc">The Emerald — guardian of the marshlands</div>
+                        <div class="char-stats">
+                            <div class="char-stat"><span class="swatch" style="background:#1F8B2C"></span>FEZ</div>
+                            <div class="char-stat"><span class="swatch" style="background:#0F6E2A"></span>VEST</div>
+                            <div class="char-stat"><span class="swatch" style="background:#F4C430"></span>SASH</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div id="winScreen">
-            <div class="title">🎉 VICTORY! 🎉</div>
-            <div class="subtitle">You conquered all of Baghdad!</div>
-            <div class="score-display">Final Score: <span id="winScore">0</span></div>
-            <button class="btn" onclick="startGame()">PLAY AGAIN</button>
+        <!-- ═══════ AUDIO SETTINGS ═══════ -->
+        <div id="settings" class="dash-screen">
+            <div class="dash-header">
+                <div class="dash-header-emblem">🔊</div>
+                <div>
+                    <div class="dash-title">Audio Settings</div>
+                    <div class="dash-subtitle">Tune the music and effects</div>
+                </div>
+                <button class="dash-back" onclick="dash.back()">◀ BACK</button>
+            </div>
+            <div class="dash-body">
+                <div class="setting-row">
+                    <div class="setting-label">
+                        <span class="icon">🎵</span>
+                        <div>Music
+                            <small>Looping background melody during play</small>
+                        </div>
+                    </div>
+                    <div class="setting-control">
+                        <input type="range" class="slider" id="musicVol" min="0" max="100" step="1">
+                        <div class="value-display" id="musicVolDisplay">0</div>
+                        <div class="toggle" id="musicToggle"></div>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-label">
+                        <span class="icon">💥</span>
+                        <div>Sound Effects
+                            <small>Jumps, coins, hits, fanfare, fireballs</small>
+                        </div>
+                    </div>
+                    <div class="setting-control">
+                        <input type="range" class="slider" id="sfxVol" min="0" max="100" step="1">
+                        <div class="value-display" id="sfxVolDisplay">0</div>
+                        <div class="toggle" id="sfxToggle"></div>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-label">
+                        <span class="icon">🔊</span>
+                        <div>Master Volume
+                            <small>Final output level for everything</small>
+                        </div>
+                    </div>
+                    <div class="setting-control">
+                        <input type="range" class="slider" id="masterVol" min="0" max="100" step="1">
+                        <div class="value-display" id="masterVolDisplay">0</div>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top:8px;">
+                    <button class="menu-item" style="flex:1" onclick="dash.previewSound()">
+                        <span class="menu-icon">▶</span> Preview SFX
+                    </button>
+                    <button class="menu-item" style="flex:1" onclick="dash.previewMusic()">
+                        <span class="menu-icon">♪</span> Preview Music
+                    </button>
+                    <button class="menu-item" style="flex:1" onclick="dash.resetAudio()">
+                        <span class="menu-icon">↺</span> Reset
+                    </button>
+                </div>
+            </div>
         </div>
+
+        <!-- ═══════ CONTROLS ═══════ -->
+        <div id="controls" class="dash-screen">
+            <div class="dash-header">
+                <div class="dash-header-emblem">🎮</div>
+                <div>
+                    <div class="dash-title">Controls</div>
+                    <div class="dash-subtitle">Remap keyboard & gamepad bindings</div>
+                </div>
+                <button class="dash-back" onclick="dash.back()">◀ BACK</button>
+            </div>
+            <div class="dash-body">
+                <div class="gamepad-status">
+                    <div class="gp-dot" id="gpDot"></div>
+                    <div class="gp-name" id="gpStatus">No gamepad connected — plug in and press any button</div>
+                    <div class="gp-test" id="gpTest"></div>
+                </div>
+                <div class="control-group">
+                    <div class="control-group-title">⌨️ Keyboard & 🎮 Gamepad Bindings</div>
+                    <div class="control-row header">
+                        <span>Action</span>
+                        <span>Keyboard</span>
+                        <span>Gamepad</span>
+                    </div>
+                    <div id="bindingsList"></div>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="menu-item" style="flex:1" onclick="dash.resetBindings()">
+                        <span class="menu-icon">↺</span> Reset Bindings
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ HOW TO PLAY ═══════ -->
+        <div id="howToPlay" class="dash-screen">
+            <div class="dash-header">
+                <div class="dash-header-emblem">📜</div>
+                <div>
+                    <div class="dash-title">How to Play</div>
+                    <div class="dash-subtitle">A guide to the ancient streets</div>
+                </div>
+                <button class="dash-back" onclick="dash.back()">◀ BACK</button>
+            </div>
+            <div class="dash-body">
+                <div class="control-group">
+                    <div class="control-group-title">⚔ Basic Moves</div>
+                    <div style="font-size:13px; line-height:1.9; color:var(--d-text); opacity:0.92;">
+                        <p>· <strong style="color:var(--d-gold)">Move</strong> with ←/→ or A/D. Hold <strong style="color:var(--d-gold)">SHIFT</strong> to sprint.</p>
+                        <p>· <strong style="color:var(--d-gold)">Jump</strong> with SPACE (or W/↑). Hold for a higher jump. Tap again in the air for a <em>double jump</em>.</p>
+                        <p>· <strong style="color:var(--d-gold)">Duck</strong> with ↓ to slip under arrows or enter green pipes.</p>
+                        <p>· Slide along walls to perform a <strong style="color:var(--d-gold)">wall-jump</strong>.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="control-group-title">🔥 Power-ups</div>
+                    <div style="font-size:13px; line-height:1.9; color:var(--d-text); opacity:0.92;">
+                        <p>· <strong style="color:#FF4500">Fireball</strong> — press F to launch a fireball.</p>
+                        <p>· <strong style="color:#00BFFF">Speed</strong> · <strong style="color:#32CD32">Super Jump</strong> · <strong style="color:#FFD700">Magnet</strong> · <strong style="color:#7CFC00">Shield</strong> · <strong style="color:#FFFF00">Star</strong> — all timed buffs.</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="control-group-title">🪙 Tips</div>
+                    <div style="font-size:13px; line-height:1.9; color:var(--d-text); opacity:0.92;">
+                        <p>· 50 coins or 10 gems give an extra life.</p>
+                        <p>· Stomp enemies back-to-back for combo points.</p>
+                        <p>· Pipes warp to bonus rooms. Switches and hidden blocks open shortcuts.</p>
+                        <p>· Press <strong style="color:var(--d-gold)">ESC</strong> any time to pause.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ ABOUT ═══════ -->
+        <div id="about" class="dash-screen">
+            <div class="dash-header">
+                <div class="dash-header-emblem">ⓘ</div>
+                <div>
+                    <div class="dash-title">About</div>
+                    <div class="dash-subtitle">A note from the maker</div>
+                </div>
+                <button class="dash-back" onclick="dash.back()">◀ BACK</button>
+            </div>
+            <div class="dash-body">
+                <div class="about-card">
+                    <div class="about-emblem">🕌</div>
+                    <h2>Mario in Baghdad</h2>
+                    <div class="tagline">A Tribute Adventure</div>
+                    <p>Twenty-five levels carry the hero from the Tigris riverside, through golden urban Baghdad and the ancient desert ruins, into the misty marshlands and finally the towers of the Citadel — to dance with Ishtar at the gates of legend.</p>
+                    <div class="about-divider"></div>
+                    <div class="about-designer-label">Designed by</div>
+                    <div class="about-designer">Maitham Alrubaye</div>
+                    <div class="about-dedication">
+                        <div class="for">For</div>
+                        <div class="parents">My Father<br>&amp; My Mother</div>
+                        <p>Every step in this game is a small offering. Thank you for the patience that taught me, the courage that shaped me, and the love that has carried me further than any adventure ever could. This world is yours.</p>
+                    </div>
+                    <div class="about-foot">© 2026 · MADE WITH LOVE</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ PAUSE MENU ═══════ -->
+        <div id="pauseMenu" class="dash-screen">
+            <div class="dash-body">
+                <div class="pause-title">⏸ Paused</div>
+                <div class="menu-list" style="min-width:300px">
+                    <button class="menu-item primary" onclick="dash.resumeGame()">
+                        <span class="menu-icon">▶</span><span>Resume</span><span class="menu-kbd">ESC</span>
+                    </button>
+                    <button class="menu-item" onclick="dash.openFromPause('settings')">
+                        <span class="menu-icon">⚙</span><span>Audio</span>
+                    </button>
+                    <button class="menu-item" onclick="dash.openFromPause('controls')">
+                        <span class="menu-icon">🎮</span><span>Controls</span>
+                    </button>
+                    <button class="menu-item" onclick="dash.quitToMenu()">
+                        <span class="menu-icon">✕</span><span>Quit to Main Menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ REVISED GAME OVER ═══════ -->
+        <div id="gameOverScreen">
+            <div class="title">GAME OVER</div>
+            <div class="subtitle" style="color:var(--d-text-dim); letter-spacing:4px;">The road is long — try again</div>
+            <div class="score-display">Score: <span id="finalScore">0</span></div>
+            <div class="endgame-actions">
+                <button class="end-btn primary" onclick="dash.startGame()">TRY AGAIN</button>
+                <button class="end-btn" onclick="dash.quitToMenu()">MAIN MENU</button>
+            </div>
+        </div>
+
+        <!-- ═══════ REVISED WIN SCREEN ═══════ -->
+        <div id="winScreen">
+            <div class="title">🎉 VICTORY 🎉</div>
+            <div class="subtitle" style="color:var(--d-gold); letter-spacing:4px;">You conquered all of Baghdad</div>
+            <div class="score-display">Final Score: <span id="winScore">0</span></div>
+            <div class="endgame-actions">
+                <button class="end-btn primary" onclick="dash.showCredits(false)">▶ VIEW CREDITS</button>
+                <button class="end-btn" onclick="dash.startGame()">PLAY AGAIN</button>
+                <button class="end-btn" onclick="dash.quitToMenu()">MAIN MENU</button>
+            </div>
+        </div>
+
+        <!-- ═══════ CREDITS ROLL ═══════ -->
+        <div id="creditsRoll">
+            <div class="credits-stars"></div>
+            <div class="credits-scroll-wrap">
+                <div class="credits-content" id="creditsContent">
+                    <div class="credit-emblem">🕌</div>
+                    <div class="credit-title">Mario in Baghdad</div>
+                    <div class="credit-sub">A Tribute Adventure</div>
+
+                    <div class="credit-section">
+                        <h3>Designed &amp; Built By</h3>
+                        <div class="name">Maitham Alrubaye</div>
+                        <div class="role">Creator · Designer · Developer</div>
+                    </div>
+
+                    <div class="credit-section">
+                        <h3>Direction</h3>
+                        <p>Maitham Alrubaye</p>
+                        <div class="role">Game Design</div>
+                    </div>
+
+                    <div class="credit-section">
+                        <h3>Programming</h3>
+                        <p>Maitham Alrubaye</p>
+                        <div class="role">Engine · Physics · Gameplay</div>
+                    </div>
+
+                    <div class="credit-section">
+                        <h3>Art &amp; Animation</h3>
+                        <p>Maitham Alrubaye</p>
+                        <div class="role">Sprites · Backgrounds · Effects</div>
+                    </div>
+
+                    <div class="credit-section">
+                        <h3>Audio</h3>
+                        <p>Maitham Alrubaye</p>
+                        <div class="role">Music · Sound Effects</div>
+                    </div>
+
+                    <div class="credit-section">
+                        <h3>Level Design</h3>
+                        <p>25 levels across the ancient city</p>
+                        <p>Al-Rusafa · Al-Karkh · Historic Baghdad</p>
+                        <p>Outer Baghdad · The Citadel</p>
+                    </div>
+
+                    <div class="credit-section">
+                        <h3>Special Cast</h3>
+                        <p class="name" style="font-size:22px">Ishtar</p>
+                        <div class="role">Goddess of Love &amp; the Babylon Gate</div>
+                    </div>
+
+                    <div class="credit-dedication">
+                        <div class="small">— Dedicated With All My Love —</div>
+                        <div class="big">To My Father<br>&amp; My Mother</div>
+                        <p class="body-text">
+                            For every prayer at dawn, for every quiet sacrifice,<br>
+                            for the patience that taught me, for the courage that shaped me,<br>
+                            for the love that carried me further than any adventure could —<br>
+                            this world is yours.
+                        </p>
+                        <p class="body-text" style="margin-top:18px">
+                            Every coin, every fireball, every step toward the citadel<br>
+                            is a small thank-you, set against the stars of Babylon.
+                        </p>
+                        <div class="signature">
+                            With love,
+                            <span class="designer-name">Maitham Alrubaye</span>
+                        </div>
+                    </div>
+
+                    <div class="credit-section">
+                        <h3>Thank You For Playing</h3>
+                        <p style="font-size:14px; color:var(--d-text-dim); letter-spacing:3px;">— مع المحبة — With Love —</p>
+                    </div>
+
+                    <div class="credit-thanks">— FIN —</div>
+                    <div class="credit-final-emblem">🕌</div>
+                </div>
+            </div>
+            <button class="credits-skip" onclick="dash.skipCredits()">SKIP ⏭</button>
+        </div>
+
+        <!-- In-game pause hint -->
+        <div id="pauseHint">ESC to pause</div>
 
         <div id="levelScreen">
             <div class="title">LEVEL COMPLETE!</div>
@@ -568,26 +1831,131 @@
         let musicTimer = null;
         let musicNoteIndex = 0;
 
+        // ───── Dashboard / Settings state ─────
+        let masterGain = null, musicGain = null, sfxGain = null;
+        let gamePaused = false;
+
+        const CHAR_PALETTES = {
+            mario: {
+                fezColor: '#B22222', fezBandColor: '#000000',
+                vestColor: '#6A0DAD', vestTrim: '#FFD700',
+                sashColor: '#DC143C', shoeColor: '#8B4513',
+                pantsColor: '#FFFFFF', label: 'MARIO'
+            },
+            luigi: {
+                fezColor: '#1F8B2C', fezBandColor: '#072F0C',
+                vestColor: '#0F6E2A', vestTrim: '#FFD700',
+                sashColor: '#F4C430', shoeColor: '#5C3A1E',
+                pantsColor: '#FFFFFF', label: 'LUIGI'
+            }
+        };
+        let selectedCharacter = 'mario';
+
+        const AUDIO_DEFAULTS = {
+            musicEnabled: false, musicVolume: 65,
+            sfxEnabled: true,    sfxVolume: 80,
+            masterVolume: 80
+        };
+        let audioSettings = { ...AUDIO_DEFAULTS };
+
+        const DEFAULT_KEY_BINDINGS = {
+            left:  ['ArrowLeft', 'a'],
+            right: ['ArrowRight', 'd'],
+            up:    ['ArrowUp', 'w'],
+            down:  ['ArrowDown', 's'],
+            jump:  [' '],
+            fire:  ['f'],
+            run:   ['Shift'],
+            pause: ['Escape', 'p']
+        };
+        // Standard gamepad mapping (Xbox/PS layout indices)
+        // 0=A/Cross, 1=B/Circle, 2=X/Square, 3=Y/Triangle
+        // 4=LB/L1, 5=RB/R1, 6=LT/L2, 7=RT/R2
+        // 8=Back/Share, 9=Start, 10=L3, 11=R3
+        // 12=DPadUp, 13=DPadDown, 14=DPadLeft, 15=DPadRight
+        const DEFAULT_PAD_BINDINGS = {
+            jump: 0,   // A / Cross
+            fire: 2,   // X / Square
+            run:  5,   // RB / R1
+            down: 1,   // B / Circle (alt-duck)
+            pause: 9   // Start
+        };
+        let keyBindings = JSON.parse(JSON.stringify(DEFAULT_KEY_BINDINGS));
+        let padBindings = JSON.parse(JSON.stringify(DEFAULT_PAD_BINDINGS));
+
+        // ───── Settings persistence ─────
+        function loadSettings() {
+            try {
+                const raw = localStorage.getItem('mariobg_settings');
+                if (!raw) return;
+                const s = JSON.parse(raw);
+                if (s.audioSettings) audioSettings = { ...AUDIO_DEFAULTS, ...s.audioSettings };
+                if (s.selectedCharacter && CHAR_PALETTES[s.selectedCharacter]) {
+                    selectedCharacter = s.selectedCharacter;
+                }
+                if (s.keyBindings) {
+                    keyBindings = { ...DEFAULT_KEY_BINDINGS, ...s.keyBindings };
+                }
+                if (s.padBindings) {
+                    padBindings = { ...DEFAULT_PAD_BINDINGS, ...s.padBindings };
+                }
+            } catch (e) {}
+        }
+        function saveSettings() {
+            try {
+                localStorage.setItem('mariobg_settings', JSON.stringify({
+                    audioSettings, selectedCharacter, keyBindings, padBindings
+                }));
+            } catch (e) {}
+        }
+        loadSettings();
 
 async function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
+            ensureAudioGraph();
             // Resume audio context if suspended (browser autoplay policy)
-            if (audioCtx.state === 'suspended') {
+            if (audioCtx && audioCtx.state === 'suspended') {
                 await audioCtx.resume();
             }
         }
 
+        // Build the gain graph: oscillators -> sfxGain/musicGain -> masterGain -> destination.
+        // This lets settings live-control every sound without rewiring per-oscillator routing.
+        function ensureAudioGraph() {
+            if (!audioCtx) {
+                const AC = window.AudioContext || window.webkitAudioContext;
+                if (!AC) return false;
+                try { audioCtx = new AC(); } catch (e) { return false; }
+            }
+            if (!masterGain) {
+                masterGain = audioCtx.createGain();
+                masterGain.connect(audioCtx.destination);
+                sfxGain = audioCtx.createGain();
+                sfxGain.connect(masterGain);
+                musicGain = audioCtx.createGain();
+                musicGain.connect(masterGain);
+                applyAudioSettings();
+            }
+            return true;
+        }
+        function applyAudioSettings() {
+            if (!masterGain) return;
+            const now = audioCtx.currentTime;
+            const m = Math.max(0, Math.min(1, audioSettings.masterVolume / 100));
+            const sV = audioSettings.sfxEnabled ? Math.max(0, Math.min(1, audioSettings.sfxVolume / 100)) : 0;
+            const mV = audioSettings.musicEnabled ? Math.max(0, Math.min(1, audioSettings.musicVolume / 100)) : 0;
+            masterGain.gain.setTargetAtTime(m, now, 0.02);
+            sfxGain.gain.setTargetAtTime(sV, now, 0.02);
+            musicGain.gain.setTargetAtTime(mV, now, 0.02);
+        }
+
         function playSound(type) {
+            // Settings short-circuit — when SFX is muted or master is at zero we skip the work entirely.
+            if (!audioSettings.sfxEnabled || audioSettings.sfxVolume <= 0 || audioSettings.masterVolume <= 0) return;
+
             // Auto-create the context on first call so any sound can wake up audio
             // (e.g. on respawn or level start even if startGame wasn't the entry point).
             try {
-                if (!audioCtx) {
-                    const AC = window.AudioContext || window.webkitAudioContext;
-                    if (!AC) return;
-                    audioCtx = new AC();
-                }
+                if (!ensureAudioGraph()) return;
                 // Browsers suspend the context when the tab loses focus — resume on demand.
                 if (audioCtx.state === 'suspended') {
                     audioCtx.resume();
@@ -600,7 +1968,7 @@ async function initAudio() {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
-            gain.connect(audioCtx.destination);
+            gain.connect(sfxGain || audioCtx.destination);
 
             const now = audioCtx.currentTime;
 
@@ -686,7 +2054,7 @@ async function initAudio() {
                         const osc2 = audioCtx.createOscillator();
                         const gain2 = audioCtx.createGain();
                         osc2.connect(gain2);
-                        gain2.connect(audioCtx.destination);
+                        gain2.connect(sfxGain || audioCtx.destination);
                         osc2.type = 'square';
                         osc2.frequency.setValueAtTime(freq, now + i * 0.15);
                         gain2.gain.setValueAtTime(0.15, now + i * 0.15);
@@ -707,37 +2075,103 @@ async function initAudio() {
             }
         }
 
-        // Background music - simple looping melody
-
-        var melody = [261, 329, 392, 523, 392, 523, 659, 523, 392, 329, 261, 329, 392, 329, 261, 196];
+        // ───── Background music: Mesopotamian-flavored Hijaz scale ─────
+        // Each entry: [melodyHz, bassHz, beats] — 0 = rest. Built on D Hijaz so the
+        // game's golden Babylon theme has that Middle-Eastern minor flavor.
+        const MUSIC_TRACK = [
+            [294, 147, 1], [311, 147, 1], [370, 185, 1], [392, 196, 1],
+            [440, 220, 2], [392, 196, 1], [370, 185, 1],
+            [311, 156, 2], [294, 147, 2],
+            [311, 156, 1], [370, 185, 1], [392, 196, 1], [466, 233, 1],
+            [523, 262, 2], [466, 233, 1], [392, 196, 1],
+            [370, 185, 2], [311, 156, 2],
+            [294, 147, 1], [311, 147, 1], [370, 185, 1], [466, 233, 1],
+            [523, 262, 1], [466, 233, 1], [370, 185, 1], [311, 156, 1],
+            [294, 147, 4],
+            [0, 0, 1],
+            [392, 196, 1], [466, 233, 1], [523, 262, 1], [587, 294, 1],
+            [523, 262, 2], [466, 233, 2],
+            [392, 196, 2], [311, 156, 2],
+            [294, 147, 4]
+        ];
+        const BEAT_MS = 260;
+        let musicBeatIndex = 0;
 
         function startMusic() {
-            // Music intentionally disabled — only sound effects play.
-            return;
+            if (!audioSettings.musicEnabled) return;
+            if (!ensureAudioGraph()) return;
+            if (isMusicPlaying) return;
+            isMusicPlaying = true;
+            musicBeatIndex = 0;
+            scheduleNextMusicBeat();
         }
 
-        function playNextNote() {
+        function scheduleNextMusicBeat() {
             if (!isMusicPlaying || !audioCtx) return;
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-            } catch (e) {}
+            const step = MUSIC_TRACK[musicBeatIndex];
+            const dur = step[2] * BEAT_MS;
+            playMusicStep(step);
+            musicBeatIndex = (musicBeatIndex + 1) % MUSIC_TRACK.length;
+            musicTimer = setTimeout(scheduleNextMusicBeat, dur);
+        }
+
+        function playMusicStep(step) {
+            if (!audioCtx || !musicGain) return;
+            try { if (audioCtx.state === 'suspended') audioCtx.resume(); } catch (e) {}
             if (audioCtx.state !== 'running') return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(melody[musicNoteIndex], audioCtx.currentTime);
-            // Louder so it's actually audible on top of sound effects.
-            gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.22);
-            osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.2);
-            musicNoteIndex = (musicNoteIndex + 1) % melody.length;
-            musicTimer = setTimeout(playNextNote, 250);
+            const [melHz, bassHz, beats] = step;
+            const now = audioCtx.currentTime;
+            const dur = (beats * BEAT_MS) / 1000;
+
+            // Skip the whole render if music is silenced — saves nodes.
+            if (audioSettings.musicVolume <= 0 || !audioSettings.musicEnabled) return;
+
+            if (melHz > 0) {
+                // Melody voice — triangle for warmth, with a soft attack/release envelope.
+                const mOsc = audioCtx.createOscillator();
+                const mGain = audioCtx.createGain();
+                mOsc.type = 'triangle';
+                mOsc.frequency.setValueAtTime(melHz, now);
+                mGain.gain.setValueAtTime(0.0001, now);
+                mGain.gain.exponentialRampToValueAtTime(0.22, now + 0.03);
+                mGain.gain.exponentialRampToValueAtTime(0.001, now + dur * 0.95);
+                mOsc.connect(mGain);
+                mGain.connect(musicGain);
+                mOsc.start(now);
+                mOsc.stop(now + dur);
+
+                // Soft sine overlay for sweetness.
+                const sOsc = audioCtx.createOscillator();
+                const sGain = audioCtx.createGain();
+                sOsc.type = 'sine';
+                sOsc.frequency.setValueAtTime(melHz * 2, now);
+                sGain.gain.setValueAtTime(0.0001, now);
+                sGain.gain.exponentialRampToValueAtTime(0.06, now + 0.04);
+                sGain.gain.exponentialRampToValueAtTime(0.001, now + dur * 0.9);
+                sOsc.connect(sGain);
+                sGain.connect(musicGain);
+                sOsc.start(now);
+                sOsc.stop(now + dur);
+            }
+            if (bassHz > 0) {
+                // Bass voice — sine, longer sustain.
+                const bOsc = audioCtx.createOscillator();
+                const bGain = audioCtx.createGain();
+                bOsc.type = 'sine';
+                bOsc.frequency.setValueAtTime(bassHz, now);
+                bGain.gain.setValueAtTime(0.0001, now);
+                bGain.gain.exponentialRampToValueAtTime(0.18, now + 0.05);
+                bGain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+                bOsc.connect(bGain);
+                bGain.connect(musicGain);
+                bOsc.start(now);
+                bOsc.stop(now + dur + 0.05);
+            }
         }
 
         function stopMusic() {
             isMusicPlaying = false;
-            if (musicTimer) clearTimeout(musicTimer);
+            if (musicTimer) { clearTimeout(musicTimer); musicTimer = null; }
         }
 
         // ═══════════════════════════════════════════
@@ -5287,10 +6721,11 @@ async function initAudio() {
             ctx.translate(0, bob);
 
             const skinColor = '#FFDAB9';
-            const vestColor = hasPower('fireball') ? '#FF4500' : (hasPower('tornado') ? '#2D9CDB' : (hasPower('star') ? '#FFD700' : '#6A0DAD'));
-            const pantsColor = '#FFFFFF';
-            const sashColor = '#DC143C';
-            const shoeColor = '#8B4513';
+            const palette = CHAR_PALETTES[selectedCharacter] || CHAR_PALETTES.mario;
+            const vestColor = hasPower('fireball') ? '#FF4500' : (hasPower('tornado') ? '#2D9CDB' : (hasPower('star') ? '#FFD700' : palette.vestColor));
+            const pantsColor = palette.pantsColor;
+            const sashColor = palette.sashColor;
+            const shoeColor = palette.shoeColor;
 
             // --- SHOES ---
             const legSwing = isWalking ? walkPhase * 5 : (isJumping ? -3 : 0);
@@ -5378,7 +6813,7 @@ async function initAudio() {
             ctx.closePath();
             ctx.fill();
             // Vest trim
-            ctx.strokeStyle = '#FFD700';
+            ctx.strokeStyle = palette.vestTrim;
             ctx.lineWidth = 1;
             ctx.beginPath(); ctx.moveTo(12, yo + 16); ctx.lineTo(10, yo + 33); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(28, yo + 16); ctx.lineTo(30, yo + 33); ctx.stroke();
@@ -5429,8 +6864,8 @@ async function initAudio() {
             ctx.lineWidth = 1.5;
             ctx.beginPath(); ctx.moveTo(19, yo + 4); ctx.quadraticCurveTo(22, yo + 3, 26, yo + 4); ctx.stroke();
 
-            // --- FEZ (taller, with tassel) ---
-            ctx.fillStyle = '#B22222';
+            // --- FEZ (taller, with tassel) — color comes from character palette ---
+            ctx.fillStyle = palette.fezColor;
             ctx.beginPath();
             ctx.moveTo(13, yo + 4);
             ctx.lineTo(27, yo + 4);
@@ -5441,7 +6876,7 @@ async function initAudio() {
             // Fez top flat part
             ctx.fillRect(14, yo - 7, 12, 2);
             // Fez band
-            ctx.fillStyle = '#000';
+            ctx.fillStyle = palette.fezBandColor;
             ctx.fillRect(13, yo + 2, 14, 2);
             // Tassel
             ctx.strokeStyle = '#FFD700';
@@ -8276,9 +9711,11 @@ async function initAudio() {
                 // Check if player reached the door
                 if (player.x+player.width > doorX - 40 && player.x < doorX + 40 && !celebrationTimer && !liveBoss) {
                     // Final level — Ishtar appears and dances with the player. Other
-                    // levels keep the classic walk-into-the-door fade.
+                    // levels keep the classic walk-into-the-door fade. The finale dance
+                    // is long (~18s) so the moment with Ishtar feels like a real payoff
+                    // before credits roll.
                     const isFinal = level >= MAX_LEVEL;
-                    celebrationTimer = isFinal ? 360 : 150;   // 6s for final, 2.5s otherwise
+                    celebrationTimer = isFinal ? 1080 : 150;  // 18s for final, 2.5s otherwise
                     playerWalkingIn = !isFinal;               // skip door-walk on final
                     playerFading = false;
                     f.triggered = true;
@@ -8302,11 +9739,11 @@ async function initAudio() {
                         }
                     }, 300);
                     if (isFinal) {
-                        // Sustained firework volley for the Ishtar dance.
-                        for (let t = 600; t < 5000; t += 350) {
+                        // Sustained firework volley for the Ishtar dance — runs the full ~18s.
+                        for (let t = 600; t < 17500; t += 320) {
                             setTimeout(() => {
                                 if (!ishtarDance || !ishtarDance.active) return;
-                                createFirework(doorX + (Math.random() * 300 - 150), f.y - 100 - Math.random() * 120);
+                                createFirework(doorX + (Math.random() * 320 - 160), f.y - 100 - Math.random() * 140);
                             }, t);
                         }
                     }
@@ -8341,10 +9778,19 @@ async function initAudio() {
                             });
                         }
                         if (t === 1) {
-                            addFloatingText(ishtarDance.x - 60, ishtarDance.y - 220, 'ISHTAR APPEARS', '#FFD700', 28, { life: 90 });
+                            addFloatingText(ishtarDance.x - 60, ishtarDance.y - 220, 'ISHTAR APPEARS', '#FFD700', 28, { life: 120 });
                         }
-                        if (t === 90) {
-                            addFloatingText(player.x + 10, player.y - 60, 'DANCING WITH ISHTAR', '#FF6FB5', 26, { life: 180 });
+                        if (t === 120) {
+                            addFloatingText(player.x + 10, player.y - 60, 'DANCING WITH ISHTAR', '#FF6FB5', 26, { life: 240 });
+                        }
+                        if (t === 420) {
+                            addFloatingText(ishtarDance.x - 80, ishtarDance.y - 240, 'BAGHDAD REJOICES', '#FFD700', 28, { life: 200 });
+                        }
+                        if (t === 720) {
+                            addFloatingText(player.x - 30, player.y - 80, 'FOR FATHER & MOTHER', '#FFD700', 26, { life: 220 });
+                        }
+                        if (t === 960) {
+                            addFloatingText(ishtarDance.x - 90, ishtarDance.y - 220, 'A TRIBUTE GAME', '#FF6FB5', 24, { life: 180 });
                         }
                     } else if (playerWalkingIn) {
                         // Auto walk to center of door
@@ -8372,8 +9818,15 @@ async function initAudio() {
                         playSound('levelComplete');
 
                         if (level >= MAX_LEVEL) {
+                            // Final level: the dance is done, the credits roll. After the
+                            // credits the win screen lets the player choose Play Again or
+                            // return to the main menu.
                             document.getElementById('winScore').textContent = score;
-                            document.getElementById('winScreen').style.display = 'flex';
+                            if (window.dash && dash.showCredits) {
+                                dash.showCredits(false);
+                            } else {
+                                document.getElementById('winScreen').style.display = 'flex';
+                            }
                         } else {
                             document.getElementById('levelScore').textContent = score;
                             document.getElementById('levelCompleteName').textContent =
@@ -8577,6 +10030,11 @@ async function initAudio() {
 
         function stepGameFrame(scheduleNext = true) {
             if (!gameRunning && scheduleNext) return;
+            // Halt updates while paused, but the last drawn frame stays on screen behind the pause overlay.
+            if (gamePaused && scheduleNext) return;
+
+            // Poll any connected gamepad and mirror its state into `keys`.
+            if (scheduleNext) pollGamepad();
 
             // Clean state reset to prevent flickering
             ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -8779,8 +10237,14 @@ async function initAudio() {
             initLevel(); updateUI();
             ['startScreen','gameOverScreen','winScreen','levelScreen'].forEach(
                 id => document.getElementById(id).style.display = 'none');
+            // Hide every dashboard overlay so the canvas is free for play.
+            document.querySelectorAll('.dash-screen').forEach(el => el.classList.remove('active'));
+            const creditsEl = document.getElementById('creditsRoll');
+            if (creditsEl) creditsEl.classList.remove('active');
             showLevelIntro();
+            gamePaused = false;
             gameRunning = true;
+            if (window.dash && dash.syncMenuBackdrop) dash.syncMenuBackdrop();
             startMusic();
             gameLoop();
         }
@@ -8878,36 +10342,166 @@ async function initAudio() {
             }
         }
 
+        // Match a raw key event against the user's bindings. Returns the action name or null.
+        function actionForKey(key) {
+            if (!key) return null;
+            const lower = key.toLowerCase();
+            for (const action in keyBindings) {
+                const list = keyBindings[action] || [];
+                for (const k of list) {
+                    if (k.toLowerCase() === lower) return action;
+                }
+            }
+            return null;
+        }
+
+        // Drive the existing `keys` flags from an abstract action name.
+        function setActionKey(action, value) {
+            switch (action) {
+                case 'left':  keys.left = value; break;
+                case 'right': keys.right = value; break;
+                case 'up':    keys.up = value; if (value) player.jumpBuffer = 8; break;
+                case 'down':  keys.down = value; break;
+                case 'jump':  keys.space = value; if (value) player.jumpBuffer = 8; break;
+                case 'fire':  keys.fire = value; break;
+                case 'run':   keys.shift = value; break;
+            }
+        }
+        function clearAllInput() {
+            keys.left = keys.right = keys.up = keys.down = false;
+            keys.space = keys.fire = keys.shift = false;
+        }
+
         document.addEventListener('keydown', e => {
+            // While the rebinding UI is listening, every keypress goes to it instead of gameplay.
+            if (window.dash && dash.captureKeydown && dash.captureKeydown(e)) {
+                e.preventDefault();
+                return;
+            }
             // Cheat buffer: append the letter (A-Z) to a rolling buffer.
             if (e.key && e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
                 checkCheatBuffer(e.key.toUpperCase());
             }
-            if (e.key==='ArrowLeft'||e.key==='a') keys.left = true;
-            if (e.key==='ArrowRight'||e.key==='d') keys.right = true;
-            if (e.key==='ArrowUp'||e.key==='w') { keys.up = true; player.jumpBuffer = 8; }
-            if (e.key==='ArrowDown'||e.key==='s') keys.down = true;
-            if (e.key===' ') {
-                keys.space = true;
-                player.jumpBuffer = 8;
+            // ESC during credits skips them.
+            const creditsEl = document.getElementById('creditsRoll');
+            if (creditsEl && creditsEl.classList.contains('active') && (e.key === 'Escape' || e.key === ' ')) {
+                if (window.dash) dash.skipCredits();
                 e.preventDefault();
-                // Press SPACE to proceed to next level after completing a level
-                if (waitingForNextLevel) {
-                    nextLevel();
+                return;
+            }
+            // ESC / pause toggle — only meaningful while playing.
+            const action = actionForKey(e.key);
+            if (action === 'pause') {
+                if (gameRunning) {
+                    if (gamePaused) dash.resumeGame();
+                    else dash.pauseGame();
+                    e.preventDefault();
+                }
+                return;
+            }
+            // Enter/Space on menus advances primary action.
+            if ((e.key === 'Enter' || e.key === 'Return') && window.dash) {
+                if (dash.handleMenuConfirm()) { e.preventDefault(); return; }
+            }
+            if (action) {
+                setActionKey(action, true);
+                if (action === 'jump') {
+                    e.preventDefault();
+                    if (waitingForNextLevel) nextLevel();
                 }
             }
-            if (e.key==='f'||e.key==='F') keys.fire = true;
-            if (e.key==='Shift'||e.key==='shift') keys.shift = true;
         });
         document.addEventListener('keyup', e => {
-            if (e.key==='ArrowLeft'||e.key==='a') keys.left = false;
-            if (e.key==='ArrowRight'||e.key==='d') keys.right = false;
-            if (e.key==='ArrowUp'||e.key==='w') keys.up = false;
-            if (e.key==='ArrowDown'||e.key==='s') keys.down = false;
-            if (e.key===' ') keys.space = false;
-            if (e.key==='f'||e.key==='F') keys.fire = false;
-            if (e.key==='Shift'||e.key==='shift') keys.shift = false;
+            const action = actionForKey(e.key);
+            if (action) setActionKey(action, false);
         });
+
+        // ─────────────── GAMEPAD ───────────────
+        // Polled each frame from the game loop. We mirror the active pad state into the
+        // same `keys` flags the engine already reads, so the rest of the game stays oblivious.
+        let connectedPad = null;
+        let padPrevButtons = [];
+        let padPauseLatch = false;
+
+        window.addEventListener('gamepadconnected', e => {
+            connectedPad = e.gamepad.index;
+            if (window.dash) dash.refreshGamepadStatus();
+        });
+        window.addEventListener('gamepaddisconnected', e => {
+            if (connectedPad === e.gamepad.index) connectedPad = null;
+            if (window.dash) dash.refreshGamepadStatus();
+        });
+
+        function getActiveGamepad() {
+            const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+            if (!pads) return null;
+            // Prefer the most recently connected pad; fall back to first non-null entry.
+            if (connectedPad !== null && pads[connectedPad]) return pads[connectedPad];
+            for (let i = 0; i < pads.length; i++) if (pads[i]) { connectedPad = i; return pads[i]; }
+            return null;
+        }
+
+        function pollGamepad() {
+            const gp = getActiveGamepad();
+            if (!gp) { padPrevButtons = []; return; }
+
+            // Capture-mode: send raw button press to the rebinding UI.
+            if (window.dash && dash.captureGamepad) {
+                for (let i = 0; i < gp.buttons.length; i++) {
+                    const pressed = !!(gp.buttons[i] && gp.buttons[i].pressed);
+                    const wasPressed = !!padPrevButtons[i];
+                    if (pressed && !wasPressed) {
+                        if (dash.captureGamepad(i)) { padPrevButtons[i] = pressed; return; }
+                    }
+                    padPrevButtons[i] = pressed;
+                }
+            }
+
+            // Movement: left stick (axes 0/1) + d-pad.
+            const lx = gp.axes && gp.axes.length > 0 ? gp.axes[0] : 0;
+            const ly = gp.axes && gp.axes.length > 1 ? gp.axes[1] : 0;
+            const dead = 0.35;
+            const btn = i => !!(gp.buttons[i] && gp.buttons[i].pressed);
+            const dpadLeft  = btn(14);
+            const dpadRight = btn(15);
+            const dpadUp    = btn(12);
+            const dpadDown  = btn(13);
+            keys.left  = dpadLeft  || lx < -dead;
+            keys.right = dpadRight || lx > dead;
+            keys.up    = dpadUp    || ly < -dead;
+            keys.down  = dpadDown  || ly > dead || btn(padBindings.down);
+
+            // Buttons: jump / fire / run / pause via remappable bindings.
+            const jumpBtn  = btn(padBindings.jump);
+            const fireBtn  = btn(padBindings.fire);
+            const runBtn   = btn(padBindings.run);
+            const pauseBtn = btn(padBindings.pause);
+
+            // Edge-triggered jump for buffer + level-advance.
+            const prevJump = !!padPrevButtons[padBindings.jump];
+            if (jumpBtn && !prevJump) {
+                player.jumpBuffer = 8;
+                if (waitingForNextLevel) nextLevel();
+            }
+            keys.space = jumpBtn;
+            keys.fire  = fireBtn;
+            keys.shift = runBtn;
+
+            // Pause toggle (edge-triggered).
+            if (pauseBtn && !padPauseLatch) {
+                padPauseLatch = true;
+                if (gameRunning && window.dash) {
+                    if (gamePaused) dash.resumeGame();
+                    else dash.pauseGame();
+                }
+            } else if (!pauseBtn) {
+                padPauseLatch = false;
+            }
+
+            // Remember button states for next-frame edge detection.
+            padPrevButtons = [];
+            for (let i = 0; i < gp.buttons.length; i++) padPrevButtons[i] = btn(i);
+        }
 
         // Touch controls
         let touchStartX = 0;
@@ -8935,6 +10529,619 @@ async function initAudio() {
             virtualTimeActive = previousVirtual;
             return renderGameToText();
         };
+
+        // ═══════════════════════════════════════════════════════════════
+        // DASHBOARD CONTROLLER
+        // Owns the menu/settings/credits UX and brokers calls into the
+        // game core (startGame, pause, etc.) without touching the engine.
+        // ═══════════════════════════════════════════════════════════════
+        const dash = (function() {
+            const DASH_SCREENS = ['mainMenu','characterSelect','settings','controls','howToPlay','about','pauseMenu'];
+            // Action rows shown on the controls page. Order matters — display order.
+            const ACTION_ROWS = [
+                { action: 'left',  label: 'Move Left',  icon: '◀', bind: 'key' },
+                { action: 'right', label: 'Move Right', icon: '▶', bind: 'key' },
+                { action: 'up',    label: 'Look Up',    icon: '▲', bind: 'key' },
+                { action: 'down',  label: 'Duck / Down',icon: '▼', bind: 'both' },
+                { action: 'jump',  label: 'Jump',       icon: '↥', bind: 'both' },
+                { action: 'fire',  label: 'Fireball',   icon: '🔥', bind: 'both' },
+                { action: 'run',   label: 'Run / Sprint',icon: '⚡', bind: 'both' },
+                { action: 'pause', label: 'Pause Menu', icon: '⏸', bind: 'both' }
+            ];
+            const PAD_BUTTON_NAMES = [
+                'A / Cross', 'B / Circle', 'X / Square', 'Y / Triangle',
+                'LB / L1', 'RB / R1', 'LT / L2', 'RT / R2',
+                'Back / Share', 'Start', 'L-Stick', 'R-Stick',
+                'D-Up', 'D-Down', 'D-Left', 'D-Right'
+            ];
+
+            // Active rebinding capture state: { action, target ('key' or 'pad'), buttonEl }
+            let capture = null;
+            // Tracks whether the current sub-screen was opened from the in-game pause menu,
+            // so the BACK button can return to the pause menu instead of the main menu.
+            let cameFromPause = false;
+
+            // ───── Screen navigation ─────
+            function show(screenId, fromPause = false) {
+                // Always replace whichever screen is currently active. We do NOT
+                // stack overlays — overlapping pause + sub-screen looks broken.
+                document.querySelectorAll('.dash-screen').forEach(el => el.classList.remove('active'));
+
+                // Remember the source so BACK can return there.
+                if (fromPause) cameFromPause = true;
+                if (screenId === 'mainMenu' || screenId === 'pauseMenu') cameFromPause = false;
+
+                const el = document.getElementById(screenId);
+                if (el) el.classList.add('active');
+                if (screenId === 'characterSelect') { renderCharCards(); }
+                if (screenId === 'settings')        { renderSettingsUI(); }
+                if (screenId === 'controls')        { renderBindings(); refreshGamepadStatus(); }
+                if (screenId === 'mainMenu')        { renderMenuLabels(); }
+                syncMenuBackdrop();
+            }
+
+            // BACK button handler: route to the right "parent" based on where we came from.
+            function back() {
+                if (cameFromPause && gameRunning) {
+                    cameFromPause = false;
+                    show('pauseMenu');
+                } else {
+                    cameFromPause = false;
+                    show('mainMenu');
+                }
+            }
+
+            // Hide the in-game HUD whenever a menu is up so old life/coin/score numbers
+            // don't bleed through behind the semi-transparent menu background.
+            function syncMenuBackdrop() {
+                const anyActive = document.querySelector('.dash-screen.active');
+                const ui = document.getElementById('ui');
+                const hint = document.getElementById('pauseHint');
+                if (ui) ui.style.display = anyActive ? 'none' : '';
+                if (hint) hint.style.display = (anyActive || !gameRunning) ? 'none' : 'block';
+            }
+
+            // ───── Game flow ─────
+            function dashStart() {
+                // Re-enter game from any menu state.
+                stopMusic();
+                startGame();
+            }
+
+            function pauseGame() {
+                if (!gameRunning || gamePaused) return;
+                gamePaused = true;
+                clearAllInput();
+                cameFromPause = false;
+                const pm = document.getElementById('pauseMenu');
+                if (pm) pm.classList.add('active');
+                syncMenuBackdrop();
+            }
+
+            function resumeGame() {
+                if (!gamePaused) return;
+                gamePaused = false;
+                cameFromPause = false;
+                document.querySelectorAll('.dash-screen').forEach(el => el.classList.remove('active'));
+                syncMenuBackdrop();
+                // Resume the game loop — stepGameFrame returns early when paused, so we
+                // need to kick it off again from a non-paused state.
+                if (gameRunning) gameLoop();
+            }
+
+            function quitToMenu() {
+                gameRunning = false;
+                gamePaused = false;
+                cameFromPause = false;
+                waitingForNextLevel = false;
+                if (typeof loopID !== 'undefined' && loopID) cancelAnimationFrame(loopID);
+                stopMusic();
+                // Reset the on-canvas HUD so the next session opens with fresh numbers.
+                coins = 0; gems = 0; lives = 3; score = 0; level = 1;
+                updateUI();
+                ['gameOverScreen','winScreen','levelScreen'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = 'none';
+                });
+                const creditsEl = document.getElementById('creditsRoll');
+                if (creditsEl) creditsEl.classList.remove('active');
+                show('mainMenu');
+            }
+
+            // ───── Character ─────
+            function selectChar(char) {
+                if (!CHAR_PALETTES[char]) return;
+                selectedCharacter = char;
+                saveSettings();
+                renderCharCards();
+                renderMenuLabels();
+                playSound('coin');
+            }
+
+            function renderCharCards() {
+                document.querySelectorAll('.char-card').forEach(card => {
+                    if (card.dataset.char === selectedCharacter) card.classList.add('selected');
+                    else card.classList.remove('selected');
+                });
+                drawCharPreview('charPreviewMario', 'mario');
+                drawCharPreview('charPreviewLuigi', 'luigi');
+            }
+
+            // Compact portrait of the player using the existing fez/vest motifs.
+            // Doesn't run through drawPlayer (which is bound to the live player state) —
+            // a small dedicated renderer keeps it cheap and pose-stable.
+            function drawCharPreview(canvasId, charKey) {
+                const cnv = document.getElementById(canvasId);
+                if (!cnv) return;
+                const c = cnv.getContext('2d');
+                const p = CHAR_PALETTES[charKey] || CHAR_PALETTES.mario;
+                c.clearRect(0, 0, cnv.width, cnv.height);
+
+                // Aura behind
+                const grad = c.createRadialGradient(70, 100, 10, 70, 100, 90);
+                grad.addColorStop(0, 'rgba(255,215,0,0.3)');
+                grad.addColorStop(1, 'rgba(255,215,0,0)');
+                c.fillStyle = grad;
+                c.beginPath(); c.arc(70, 100, 90, 0, Math.PI * 2); c.fill();
+
+                // Shadow disc
+                c.fillStyle = 'rgba(0,0,0,0.35)';
+                c.beginPath(); c.ellipse(70, 168, 32, 6, 0, 0, Math.PI * 2); c.fill();
+
+                // Pose: standing facing forward, slight idle bob
+                const t = (Date.now() / 600) % (Math.PI * 2);
+                const bob = Math.sin(t) * 1.5;
+
+                c.save();
+                c.translate(70, 100 + bob);
+                const s = 2.2;
+                c.scale(s, s);
+
+                // Shoes
+                c.fillStyle = p.shoeColor;
+                c.beginPath(); c.ellipse(-6, 24, 5, 3.5, 0.3, 0, Math.PI * 2); c.fill();
+                c.beginPath(); c.ellipse(6, 24, 5, 3.5, -0.3, 0, Math.PI * 2); c.fill();
+
+                // Pants
+                c.fillStyle = p.pantsColor;
+                c.beginPath();
+                c.moveTo(-9, 5);
+                c.quadraticCurveTo(0, 1, 9, 5);
+                c.quadraticCurveTo(11, 14, 7, 22);
+                c.quadraticCurveTo(0, 24, -7, 22);
+                c.quadraticCurveTo(-11, 14, -9, 5);
+                c.closePath();
+                c.fill();
+
+                // Sash
+                c.fillStyle = p.sashColor;
+                c.beginPath(); c.ellipse(0, 4, 12, 3.5, 0, 0, Math.PI * 2); c.fill();
+
+                // Chest
+                c.fillStyle = '#FFDAB9';
+                c.beginPath(); c.ellipse(0, -2, 9, 10, 0, 0, Math.PI * 2); c.fill();
+
+                // Vest sides
+                c.fillStyle = p.vestColor;
+                c.beginPath();
+                c.moveTo(-8, -9); c.lineTo(-10, 5); c.lineTo(-4, 5); c.lineTo(-5, -9);
+                c.closePath(); c.fill();
+                c.beginPath();
+                c.moveTo(5, -9); c.lineTo(4, 5); c.lineTo(10, 5); c.lineTo(8, -9);
+                c.closePath(); c.fill();
+                // Vest center cloth
+                c.beginPath();
+                c.moveTo(-4, -7); c.quadraticCurveTo(0, -9, 4, -7); c.lineTo(3, 4); c.quadraticCurveTo(0, 6, -3, 4);
+                c.closePath(); c.fill();
+                // Trim lines
+                c.strokeStyle = p.vestTrim;
+                c.lineWidth = 0.8;
+                c.beginPath(); c.moveTo(-8, -9); c.lineTo(-10, 5); c.stroke();
+                c.beginPath(); c.moveTo(8, -9); c.lineTo(10, 5); c.stroke();
+
+                // Arms
+                c.fillStyle = '#FFDAB9';
+                c.beginPath(); c.ellipse(-11, -3, 3, 7, 0.2, 0, Math.PI * 2); c.fill();
+                c.beginPath(); c.ellipse(11, -3, 3, 7, -0.2, 0, Math.PI * 2); c.fill();
+
+                // Head
+                c.fillStyle = '#FFDAB9';
+                c.beginPath(); c.ellipse(0, -16, 10, 9, 0, 0, Math.PI * 2); c.fill();
+                // Ear
+                c.beginPath(); c.arc(-9, -16, 2.4, 0, Math.PI * 2); c.fill();
+                // Nose
+                c.beginPath(); c.ellipse(7, -15, 3.5, 3, 0, 0, Math.PI * 2); c.fill();
+                // Mustache
+                c.fillStyle = '#3E2723';
+                c.beginPath(); c.ellipse(5, -11, 5, 2, -0.2, 0, Math.PI * 2); c.fill();
+                c.beginPath(); c.ellipse(-1, -11, 3, 1.6, 0.2, 0, Math.PI * 2); c.fill();
+                // Eyes
+                c.fillStyle = '#fff';
+                c.beginPath(); c.ellipse(2, -19, 2.4, 2.8, 0, 0, Math.PI * 2); c.fill();
+                c.fillStyle = '#000';
+                c.beginPath(); c.ellipse(2.4, -19, 1.4, 2, 0, 0, Math.PI * 2); c.fill();
+
+                // Fez
+                c.fillStyle = p.fezColor;
+                c.beginPath();
+                c.moveTo(-7, -23);
+                c.lineTo(7, -23);
+                c.lineTo(5, -32);
+                c.lineTo(-5, -32);
+                c.closePath();
+                c.fill();
+                c.fillRect(-6, -33, 12, 2);
+                // Band
+                c.fillStyle = p.fezBandColor;
+                c.fillRect(-7, -24.5, 14, 2);
+                // Tassel
+                const tx = Math.sin(t * 1.3) * 3;
+                c.strokeStyle = '#FFD700'; c.lineWidth = 1;
+                c.beginPath(); c.moveTo(0, -33); c.quadraticCurveTo(tx, -37, tx * 1.2, -40); c.stroke();
+                c.fillStyle = '#FFD700';
+                c.beginPath(); c.arc(tx * 1.2, -40, 1.5, 0, Math.PI * 2); c.fill();
+
+                c.restore();
+            }
+
+            // Re-render character previews so the idle bob animates.
+            setInterval(() => {
+                const sel = document.getElementById('characterSelect');
+                if (sel && sel.classList.contains('active')) {
+                    drawCharPreview('charPreviewMario', 'mario');
+                    drawCharPreview('charPreviewLuigi', 'luigi');
+                }
+            }, 60);
+
+            // ───── Audio settings UI ─────
+            function renderSettingsUI() {
+                const mv = document.getElementById('musicVol');
+                const sv = document.getElementById('sfxVol');
+                const xv = document.getElementById('masterVol');
+                if (mv) { mv.value = audioSettings.musicVolume; mv.style.setProperty('--p', audioSettings.musicVolume + '%'); }
+                if (sv) { sv.value = audioSettings.sfxVolume;   sv.style.setProperty('--p', audioSettings.sfxVolume + '%'); }
+                if (xv) { xv.value = audioSettings.masterVolume; xv.style.setProperty('--p', audioSettings.masterVolume + '%'); }
+                document.getElementById('musicVolDisplay').textContent = audioSettings.musicVolume;
+                document.getElementById('sfxVolDisplay').textContent   = audioSettings.sfxVolume;
+                document.getElementById('masterVolDisplay').textContent = audioSettings.masterVolume;
+                document.getElementById('musicToggle').classList.toggle('on', audioSettings.musicEnabled);
+                document.getElementById('sfxToggle').classList.toggle('on', audioSettings.sfxEnabled);
+                if (mv) mv.disabled = !audioSettings.musicEnabled;
+                if (sv) sv.disabled = !audioSettings.sfxEnabled;
+            }
+
+            function bindAudioControls() {
+                const wire = (sliderId, displayId, key) => {
+                    const sl = document.getElementById(sliderId);
+                    const dp = document.getElementById(displayId);
+                    if (!sl) return;
+                    sl.addEventListener('input', () => {
+                        const v = parseInt(sl.value, 10);
+                        audioSettings[key] = v;
+                        sl.style.setProperty('--p', v + '%');
+                        dp.textContent = v;
+                        applyAudioSettings();
+                        saveSettings();
+                    });
+                };
+                wire('musicVol',  'musicVolDisplay',  'musicVolume');
+                wire('sfxVol',    'sfxVolDisplay',    'sfxVolume');
+                wire('masterVol', 'masterVolDisplay', 'masterVolume');
+
+                document.getElementById('musicToggle').addEventListener('click', () => {
+                    audioSettings.musicEnabled = !audioSettings.musicEnabled;
+                    applyAudioSettings();
+                    saveSettings();
+                    renderSettingsUI();
+                    renderMenuLabels();
+                    if (audioSettings.musicEnabled && gameRunning) startMusic();
+                    else if (!audioSettings.musicEnabled) stopMusic();
+                });
+                document.getElementById('sfxToggle').addEventListener('click', () => {
+                    audioSettings.sfxEnabled = !audioSettings.sfxEnabled;
+                    applyAudioSettings();
+                    saveSettings();
+                    renderSettingsUI();
+                    renderMenuLabels();
+                    if (audioSettings.sfxEnabled) playSound('coin');
+                });
+            }
+
+            function toggleMusic() { document.getElementById('musicToggle').click(); }
+            function toggleSfx()   { document.getElementById('sfxToggle').click(); }
+
+            function resetAudio() {
+                audioSettings = { ...AUDIO_DEFAULTS };
+                applyAudioSettings();
+                saveSettings();
+                renderSettingsUI();
+                renderMenuLabels();
+                playSound('powerup');
+            }
+
+            function previewSound() {
+                ensureAudioGraph();
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                playSound('coin');
+                setTimeout(() => playSound('gem'), 180);
+                setTimeout(() => playSound('powerup'), 360);
+            }
+
+            let previewMusicTimer = null;
+            function previewMusic() {
+                ensureAudioGraph();
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                // Temporarily force music on, play 6 beats, then restore.
+                const prev = { enabled: audioSettings.musicEnabled };
+                audioSettings.musicEnabled = true;
+                applyAudioSettings();
+                if (!isMusicPlaying) startMusic();
+                if (previewMusicTimer) clearTimeout(previewMusicTimer);
+                previewMusicTimer = setTimeout(() => {
+                    if (!prev.enabled) {
+                        stopMusic();
+                        audioSettings.musicEnabled = false;
+                        applyAudioSettings();
+                    }
+                }, 4500);
+            }
+
+            // ───── Controls / bindings ─────
+            function renderBindings() {
+                const wrap = document.getElementById('bindingsList');
+                if (!wrap) return;
+                wrap.innerHTML = '';
+                ACTION_ROWS.forEach(row => {
+                    const r = document.createElement('div');
+                    r.className = 'control-row';
+                    const keys = (keyBindings[row.action] || []).map(k => prettyKey(k)).join(', ');
+                    const padBtn = (row.bind === 'both' && padBindings[row.action] !== undefined)
+                        ? prettyPad(padBindings[row.action]) : '—';
+                    r.innerHTML = `
+                        <div class="control-action">
+                            <span class="icon">${row.icon}</span>
+                            <span>${row.label}</span>
+                        </div>
+                        <button class="bind-button ${keys ? '' : 'empty'}" data-action="${row.action}" data-target="key">${keys || 'unbound'}</button>
+                        <button class="bind-button ${row.bind === 'both' ? '' : 'empty'}" data-action="${row.action}" data-target="pad" ${row.bind === 'both' ? '' : 'disabled'}>${row.bind === 'both' ? padBtn : '—'}</button>
+                    `;
+                    wrap.appendChild(r);
+                });
+                wrap.querySelectorAll('.bind-button').forEach(btn => {
+                    btn.addEventListener('click', () => beginCapture(btn));
+                });
+            }
+            function prettyKey(k) {
+                if (k === ' ') return 'SPACE';
+                if (k === 'ArrowLeft') return '←';
+                if (k === 'ArrowRight') return '→';
+                if (k === 'ArrowUp') return '↑';
+                if (k === 'ArrowDown') return '↓';
+                if (k === 'Shift') return 'SHIFT';
+                if (k === 'Control') return 'CTRL';
+                if (k === 'Alt') return 'ALT';
+                if (k === 'Escape') return 'ESC';
+                return k.length === 1 ? k.toUpperCase() : k;
+            }
+            function prettyPad(idx) {
+                if (idx === undefined || idx === null) return '—';
+                return (PAD_BUTTON_NAMES[idx] || ('Btn ' + idx));
+            }
+            function beginCapture(btn) {
+                if (capture && capture.btnEl) capture.btnEl.classList.remove('listening');
+                capture = { action: btn.dataset.action, target: btn.dataset.target, btnEl: btn };
+                btn.classList.add('listening');
+                btn.textContent = capture.target === 'key' ? 'PRESS KEY…' : 'PRESS BUTTON…';
+            }
+            function endCapture() {
+                if (capture && capture.btnEl) capture.btnEl.classList.remove('listening');
+                capture = null;
+                renderBindings();
+            }
+            function captureKeydown(e) {
+                if (!capture || capture.target !== 'key') return false;
+                if (e.key === 'Escape') { endCapture(); return true; }
+                // Bind the new key as the SOLE binding for this action.
+                keyBindings[capture.action] = [e.key];
+                saveSettings();
+                endCapture();
+                return true;
+            }
+            function captureGamepad(buttonIdx) {
+                if (!capture || capture.target !== 'pad') return false;
+                padBindings[capture.action] = buttonIdx;
+                saveSettings();
+                endCapture();
+                return true;
+            }
+            function resetBindings() {
+                keyBindings = JSON.parse(JSON.stringify(DEFAULT_KEY_BINDINGS));
+                padBindings = JSON.parse(JSON.stringify(DEFAULT_PAD_BINDINGS));
+                saveSettings();
+                renderBindings();
+                playSound('powerup');
+            }
+
+            // ───── Gamepad status ─────
+            function refreshGamepadStatus() {
+                const dot = document.getElementById('gpDot');
+                const name = document.getElementById('gpStatus');
+                if (!dot || !name) return;
+                const pad = getActiveGamepad();
+                if (pad) {
+                    dot.classList.add('connected');
+                    name.textContent = (pad.id || 'Gamepad').slice(0, 60);
+                } else {
+                    dot.classList.remove('connected');
+                    name.textContent = 'No gamepad connected — plug in and press any button';
+                }
+            }
+            // Live ticker for gamepad page (axis/button feedback).
+            setInterval(() => {
+                const ctrl = document.getElementById('controls');
+                if (!ctrl || !ctrl.classList.contains('active')) return;
+                refreshGamepadStatus();
+                const pad = getActiveGamepad();
+                const test = document.getElementById('gpTest');
+                if (!test) return;
+                if (!pad) { test.innerHTML = ''; return; }
+                const parts = [];
+                for (let i = 0; i < pad.buttons.length; i++) {
+                    if (pad.buttons[i] && pad.buttons[i].pressed) {
+                        parts.push(`<span class="pressed">${prettyPad(i)}</span>`);
+                    }
+                }
+                test.innerHTML = parts.length ? parts.join(' ') : '<span style="opacity:0.4">idle</span>';
+            }, 80);
+
+            // ───── Menu labels (status chips next to options) ─────
+            function renderMenuLabels() {
+                const charLbl = document.getElementById('menuCharLabel');
+                if (charLbl) charLbl.textContent = CHAR_PALETTES[selectedCharacter].label;
+                const aLbl = document.getElementById('menuAudioLabel');
+                if (aLbl) {
+                    const m = audioSettings.musicEnabled ? 'MUSIC' : '';
+                    const s = audioSettings.sfxEnabled ? 'SFX' : '';
+                    const lbl = [m, s].filter(Boolean).join(' + ') || 'MUTED';
+                    aLbl.textContent = lbl;
+                }
+                const pLbl = document.getElementById('menuPadLabel');
+                if (pLbl) {
+                    pLbl.textContent = getActiveGamepad() ? 'PAD READY' : 'KEYBOARD';
+                }
+            }
+
+            // ───── Credits ─────
+            let creditsTimeout = null;
+            let cameFromGame = false;
+            function showCredits(fromMenu) {
+                cameFromGame = !fromMenu;
+                stopMusic();
+                // Make sure win/level screens are hidden while credits roll.
+                ['gameOverScreen','winScreen','levelScreen'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = 'none';
+                });
+                document.querySelectorAll('.dash-screen').forEach(el => el.classList.remove('active'));
+                const cr = document.getElementById('creditsRoll');
+                if (!cr) return;
+                cr.classList.add('active');
+                // Reset the scroll animation by detaching/reattaching the node.
+                const content = document.getElementById('creditsContent');
+                if (content) {
+                    content.style.animation = 'none';
+                    void content.offsetWidth;  // force reflow
+                    content.style.animation = '';
+                }
+                // Quietly play a slow ambient tone underneath the roll.
+                if (audioSettings.musicEnabled || audioSettings.sfxEnabled) {
+                    ensureAudioGraph();
+                    playCreditsAmbient();
+                }
+                // After ~78s animation, advance to win/main.
+                if (creditsTimeout) clearTimeout(creditsTimeout);
+                creditsTimeout = setTimeout(endCredits, 78000);
+            }
+            function endCredits() {
+                if (creditsTimeout) { clearTimeout(creditsTimeout); creditsTimeout = null; }
+                stopCreditsAmbient();
+                const cr = document.getElementById('creditsRoll');
+                if (cr) cr.classList.remove('active');
+                if (cameFromGame) {
+                    document.getElementById('winScore').textContent = score;
+                    document.getElementById('winScreen').style.display = 'flex';
+                } else {
+                    show('mainMenu');
+                }
+            }
+            function skipCredits() { endCredits(); }
+
+            // Soft pad of sustained notes during credits.
+            let creditsNodes = [];
+            function playCreditsAmbient() {
+                if (!audioCtx) return;
+                stopCreditsAmbient();
+                const now = audioCtx.currentTime;
+                const target = (audioSettings.musicEnabled ? musicGain : sfxGain) || audioCtx.destination;
+                // Three sustained notes — a soft, slow pad in D minor.
+                [294, 349, 440].forEach((hz, i) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.type = 'sine';
+                    o.frequency.setValueAtTime(hz, now);
+                    g.gain.setValueAtTime(0.0001, now);
+                    g.gain.exponentialRampToValueAtTime(0.05, now + 2 + i * 0.4);
+                    o.connect(g); g.connect(target);
+                    o.start(now);
+                    creditsNodes.push({ o, g });
+                });
+            }
+            function stopCreditsAmbient() {
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+                creditsNodes.forEach(({ o, g }) => {
+                    try {
+                        g.gain.cancelScheduledValues(now);
+                        g.gain.setValueAtTime(g.gain.value, now);
+                        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+                        o.stop(now + 0.6);
+                    } catch (e) {}
+                });
+                creditsNodes = [];
+            }
+
+            // ───── Confirm / shortcuts ─────
+            function handleMenuConfirm() {
+                // Enter on main menu == Play.
+                const main = document.getElementById('mainMenu');
+                if (main && main.classList.contains('active')) {
+                    dashStart();
+                    return true;
+                }
+                return false;
+            }
+
+            // ───── Bootstrap ─────
+            function init() {
+                ensureAudioGraph();
+                applyAudioSettings();
+                bindAudioControls();
+                renderSettingsUI();
+                renderMenuLabels();
+                renderCharCards();
+                renderBindings();
+                refreshGamepadStatus();
+                syncMenuBackdrop();
+                // Keep menu labels live-current.
+                setInterval(renderMenuLabels, 700);
+            }
+
+            function openFromPause(screenId) { show(screenId, true); }
+
+            return {
+                show, back, openFromPause, syncMenuBackdrop,
+                startGame: dashStart,
+                pauseGame, resumeGame, quitToMenu,
+                selectChar, renderCharCards,
+                toggleMusic, toggleSfx,
+                resetAudio, previewSound, previewMusic,
+                resetBindings, renderBindings,
+                refreshGamepadStatus,
+                captureKeydown, captureGamepad,
+                showCredits, skipCredits,
+                handleMenuConfirm,
+                renderMenuLabels,
+                init
+            };
+        })();
+        window.dash = dash;
+
+        // Boot the dashboard once the DOM is ready.
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => dash.init());
+        } else {
+            dash.init();
+        }
     </script>
 </body>
 </html>
